@@ -28,7 +28,7 @@
                 v-on:click="delete_empty_document()"
                 v-download-data="valid_json"
                 v-download-data:type="'json'"
-                v-download-data:filename="'cdqa-v1.1.json'"
+                v-download-data:filename="getName()"
               >Download</b-button>
             </b-nav-item>
           </b-navbar-nav>
@@ -46,13 +46,13 @@
       <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
       <br>
 
-      <b-form-input v-model="question" type="text" placeholder="להכניס שאלה כאן" dir="rtl"></b-form-input>
+      <b-form-input v-model="question" type="text" placeholder="הקלידו שאלה שיש לה מענה..." dir="rtl"></b-form-input>
       <br>
 
-      <b-form-input v-model="answer" type="text" placeholder="לסמן תשובה מהפסקה והיא תופיע פה" dir="rtl"></b-form-input>
+      <b-form-input v-model="answer" type="text" placeholder="סמנו תשובה מתוך הפסקה - היא תופיע פה" dir="rtl"></b-form-input>
       <br>
 
-      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button> 
+      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
       <br>
       <br>
 
@@ -68,28 +68,28 @@
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
-        >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        >לפסקה הקודמת</b-button> or 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="context_number -= 1"
-        >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        >לפסקה הקודמת</b-button> or 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
       </div>
       <div v-else>
         <b-button
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="context_number -= 1"
-        >Previous</b-button> or 
+        >לפסקה הקודמת</b-button> or 
         <b-button
           :size="''"
           :variant="'outline-primary'"
           v-on:click="data_number += 1, context_number = 1"
-        >Next</b-button>
+        >לפסקה הבאה</b-button>
       </div>
       <br>
       <br>
@@ -109,7 +109,7 @@
         v-on:click="delete_empty_document()"
         v-download-data="valid_json"
         v-download-data:type="'json'"
-        v-download-data:filename="'cdqa-v1.1.json'"
+        v-download-data:filename="getName()"
       >Download</b-button>
     </div>
   </div>
@@ -165,6 +165,12 @@ export default {
           this.json.data.splice(i, 1);
         }
       }
+    },
+    getName: function(){
+      // eslint-disable-next-line no-console
+      // console.log(this);
+      // this.filename 
+      return this.json.data[0].title + " tagged";
     }
   },
   computed: {
@@ -226,3 +232,5 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>
+
+
