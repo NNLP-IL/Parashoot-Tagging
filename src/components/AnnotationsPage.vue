@@ -40,7 +40,7 @@
       <h2>{{ json.data[data_number - 1].title }}</h2>
       <span
         class="text-muted" dir="rtl" 
-      >Paragraph {{ context_number }} of {{ json.data[data_number - 1].paragraphs.length }} | Document {{ data_number }} of {{ json.data.length }}</span>
+      >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span>
       <br>
       <br>
       <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
@@ -68,7 +68,7 @@
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
-        >לפסקה הקודמת</b-button> or 
+        >לפסקה הקודמת</b-button> או 
         <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
@@ -76,7 +76,7 @@
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="context_number -= 1"
-        >לפסקה הקודמת</b-button> or 
+        >לפסקה הקודמת</b-button> או 
         <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
       </div>
       <div v-else>
@@ -84,7 +84,7 @@
           :size="''"
           :variant="'outline-secondary'"
           v-on:click="context_number -= 1"
-        >לפסקה הקודמת</b-button> or 
+        >לפסקה הקודמת</b-button> או 
         <b-button
           :size="''"
           :variant="'outline-primary'"
@@ -128,7 +128,7 @@ export default {
       context_number: 1,
       question: "",
       answer: "",
-      fields: ["Questions", "Answers", "Edit"],
+      fields: ["שאלות", "תשובות", "עריכה"],
       query: ""
     };
   },

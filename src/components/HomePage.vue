@@ -6,7 +6,7 @@
     <div v-else>
       <h1>כתיבת שאלות על פסקאות מוויקיפדיה</h1>
       <hr>
-<p dir = "rtl">
+  <p>
   במשימה זו תקבלו פסקאות אקראיות שנלקחו מערכים בוויקיפדיה. לכל פסקה תתבקשו לנסח שני סוגים של שאלות הבנת הנקרא:
   <br>
   <li>
@@ -21,9 +21,10 @@
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
   <b><a href="https://docs.google.com/document/d/1mkF5Q_cZcTbVkL91QEpU-QTUEhDmgJTfvkVB-6FQdKg/edit"
-   > ההנחיות</a></b>
+   > ההנחיות</a></b>.
     </h5> 
-    </p>
+    מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.
+    <br>
       <!-- <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer> -->
       <br>
       <div class="uploadBar" align = "left">
