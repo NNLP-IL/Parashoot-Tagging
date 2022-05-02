@@ -26,7 +26,7 @@
     מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.
     <br>
       <!-- <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer> -->
-      <br>
+      <!-- <br>
       <div class="uploadBar" align = "left">
         <b-form-file
           v-model="file"
@@ -36,7 +36,15 @@
         ></b-form-file>
       </div>
       <br>
-      <b-button :size="''" :variant="'primary'" v-on:click="readFile(file.name)">Upload</b-button>
+      <b-button :size="''" :variant="'primary'" v-on:click="readFileFromUpload()">Upload</b-button>
+      <br><br> -->
+      <!-- <h5>אם אין לכם קובץ להעלות בחרו באופציה הבאה:</h5> -->
+      <br>
+      <h5>Prolific ID</h5><input v-model="prolificID" placeholder="להכניס Prolific ID פה" />
+      <br>
+      <p style="color:red;">{{ errors }}</p>
+      <br>
+      <b-button :size="''" :variant="'primary'" v-on:click="getRandomFile()">Annotate Random Paragraph</b-button>
     </div>
   </div>
 </template>
@@ -74,24 +82,62 @@ export default {
       fileUploaded: false,
       file: null,
       json: null,
-      
+      jsonID: null,
+      errors: "",    
+      prolificID: "", 
     };
   },
   methods: {
-    readFile: function() {
-      // this.fileName = nametogo;
-
+    readFile: function (jsonID) {
+      this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(jsonID, 4) + ".json");
+      this.json.jsonID = jsonID;
+      this.fileUploaded = true;
+    },
+    readFileFromUpload: function() {
       var reader = new FileReader();
-        // eslint-disable-next-line no-console
-        // console.log(this);
       reader.onload = function(event) {
         this.json = JSON.parse(event.target.result);
         this.fileUploaded = true;
         
       }.bind(this);
       reader.readAsText(this.file);
-      
+    },
+    pad: function (num, size) {
+      while (num.length < size) num = "0" + num;
+      return num;
+    },
+    getRandomInt: function (min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    checkID: function(){
+      // eslint-disable-next-line no-console
+      // console.log(this)
+      if(this.prolificID == ""){
+        this.errors = "צריך להכניס ID כדי לתייג";
+        return false;
+      }
+      else{
+          this.errors = "";
+          return true;
+      }
+    },
+    getRandomFile: function () {// When pressing the button!!!
+      if(this.checkID() == true)
+      {
+        this.jsonID = this.getRandomInt(21, 36).toString();
+        this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
+        this.json.jsonID = this.jsonID;
+        this.json.prolificID = this.prolificID;
+        this.fileUploaded = true;
+      }
+    },
+    state: function (jsonID) {
+      var intID = parseInt(jsonID)
+      return intID > 0 && intID < 1200;
     }
+    
   },
   components: {
     AnnotationsPage

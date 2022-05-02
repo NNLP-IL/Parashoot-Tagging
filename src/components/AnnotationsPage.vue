@@ -2,7 +2,7 @@
   <div class="AnnotationsPage container mt-3">
     <div>
       <b-navbar sticky toggleable="lg" class="pl-0">
-        <b-navbar-brand>cdQA-annotator</b-navbar-brand>
+        <b-navbar-brand>cdQA-annotator - Welcome User Number {{this.json.prolificID}}</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -21,6 +21,7 @@
                 @hit="data_number = autocomplete.indexOf($event) + 1; context_number = 1"
               /> -->
             </b-nav-form>
+              <!-- <p>Message is: {{ message }}</p> -->
             <b-nav-item right>
               <b-button
                 :size="'sm'"
@@ -34,7 +35,7 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-    </div>
+    </div>       
     <br>
     <div v-if="data_number - 1 < json.data.length">
       <h2>{{ json.data[data_number - 1].title }}</h2>
@@ -46,18 +47,31 @@
       <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
       <br>
 
-      <b-form-input v-model="question" type="text" placeholder="הקלידו שאלה שיש לה מענה..." dir="rtl"></b-form-input>
+      <b-form-input v-model="question" type="text" placeholder="הקלידו שאלה לגבי הטקסט..." dir="rtl"></b-form-input>
       <br>
 
       <b-form-input v-model="answer" type="text" placeholder="סמנו תשובה מתוך הפסקה - היא תופיע פה" dir="rtl"></b-form-input>
       <br>
 
+      <div class="demo">
+        <div>סוג שאלה:</div>
+        <input type="radio" id="one" value=true v-model="withAnswer" />
+        <label for="one">שאלה עם תשובה בטקסט</label>
+        <br>
+        <input type="radio" id="two" value=false v-model="withAnswer"/>
+        <label for="two">שאלה שאין לה תשובה בטקסט</label>
+        <br>
+        <br>
+      </div>
       <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
+      <br>
+      <br>
+      <p style="color:red;">{{ errors }}</p>
       <br>
       <br>
 
       <b-table striped hover :items="items" :fields="fields">
-        <template slot="Edit" slot-scope="row">
+        <template slot="עריכה" slot-scope="row">
           <b-button :size="''" :variant="'danger'" @click.stop="deleteAnnotation(row.index)">Delete</b-button>
         </template>
       </b-table>
@@ -95,22 +109,22 @@
       <br>
     </div>
     <div v-else>
-      There are no more data to annotate. You can now download your annotated dataset
-      <img
-        src="../assets/ablobmaracas.gif"
-        height="30"
-        width="30"
-      >
+     תיוג מסמך הסתיים בהצלחה
+     <br>
+      <b-button
+          :size="''"
+          :variant="'primary'"
+          href="prolific.co"
+      >סיום תיוג
+      </b-button>
       <br>
       <br>
       <b-button
-        :size="''"
-        :variant="'primary'"
-        v-on:click="delete_empty_document()"
-        v-download-data="valid_json"
-        v-download-data:type="'json'"
-        v-download-data:filename="getName()"
-      >Download</b-button>
+          :size="''"
+          :variant="'primary'"
+          v-on:click="getRandomFile()"
+      >תנו לי עוד אחד
+      </b-button>
     </div>
   </div>
 </template>
@@ -121,39 +135,50 @@ const uuidv4 = require('uuid/v4');
 
 export default {
   name: "AnnotationsPage",
-  props: ["json"],
+  props: ["json" ],
   data: function() {
     return {
       data_number: 1,
       context_number: 1,
       question: "",
       answer: "",
-      fields: ["שאלות", "תשובות", "עריכה"],
-      query: ""
+      fields: ["שאלות", "תשובות", "עריכה" , "יש תשובה בטקסט"],
+      query: "",
+      message: "",
+      errors: "",
+      textSelected: false,
+      publicPath: process.env.BASE_URL,
+
+      withAnswer:true
     };
   },
   methods: {
     addAnnotation: function() {
+      if(this.checkAnswers() == false) return
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
       var qa = {
         question: this.question,
         id: uuidv4(),
-        answers: [{ answer_start: this.answer_start, text: this.answer }]
+        answers: [{ answer_start: this.answer_start, text: this.answer ,withAnswer:this.withAnswer }]
       };
       paragraph_container.qas.push(qa);
       this.question = "";
       this.answer = "";
+      this.textSelected = false;
+      this.saveJSON()
     },
     deleteAnnotation: function(row_index) {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
       paragraph_container.qas.splice(row_index, 1);
+      this.saveJSON()
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
+      this.textSelected = true;
     },
     delete_paragraph: function() {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs;
@@ -166,11 +191,41 @@ export default {
         }
       }
     },
+    checkAnswers: function(){
+      // eslint-disable-next-line no-console
+      console.log(this)
+      if(this.question == "" || this.answer ==""){
+        this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
+        return false;
+      }
+      else{
+          this.errors = "";
+          return true;
+      }
+    },
+    saveJSON: function () {
+      // this.axios.post("URL/upload",
+      //     {
+      //       'json_data': JSON.stringify(this.json),
+      //       'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + this.uuid + "_" + this.json.prolificID + ".json"
+      //     }
+      // ).catch(error => {
+      //   this.errorMessage = error;
+      //   window.alert('There was an error saving the JSON file.', error);
+      // });
+    },
+    pad: function (num, size) {
+      while (num.length < size) num = "0" + num;
+      return num;
+    },
     getName: function(){
       // eslint-disable-next-line no-console
       // console.log(this);
       // this.filename 
-      return this.json.data[0].title + " tagged";
+      // return this.json.data[0].title + " tagged";
+      let tmpJsonID = this.json.jsonID;
+      // delete this.json.jsonID;
+      return "annotated_data_" + tmpJsonID + ".json";
     }
   },
   computed: {
@@ -196,8 +251,10 @@ export default {
       var items = [];
       for (var i = 0; i < paragraph_container.qas.length; i++) {
         var item = {
-          Questions: paragraph_container.qas[i].question,
-          Answers: paragraph_container.qas[i].answers[0].text
+          // fields: ["שאלות", "תשובות", "עריכה" , "יש-תשובה"]
+          שאלות: paragraph_container.qas[i].question,
+          תשובות: paragraph_container.qas[i].answers[0].text,
+          'יש תשובה בטקסט': paragraph_container.qas[i].answers[0].withAnswer
         };
         items.push(item);
       }
