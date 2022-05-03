@@ -37,8 +37,8 @@
       </b-navbar>
     </div>       
     <br>
-    <div v-if="data_number - 1 < json.data.length">
-      <h2>{{ json.data[data_number - 1].title }}</h2>
+    <div v-if="this.toEnd == false">
+      <!-- <h2>{{ json.data[data_number - 1].title }}</h2> -->
       <span
         class="text-muted" dir="rtl" 
       >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span>
@@ -81,28 +81,31 @@
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
-        >לפסקה הקודמת</b-button> או 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button>
+         או 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="context_number -= 1"
-        >לפסקה הקודמת</b-button> או 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">לפסקה הבאה</b-button>
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button>
+         או 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
       <div v-else>
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="context_number -= 1"
-        >לפסקה הקודמת</b-button> או 
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button> 
+        או 
         <b-button
           :size="''"
           :variant="'outline-primary'"
-          v-on:click="data_number += 1, context_number = 1"
+          v-on:click="getAnotherFile()"
         >לפסקה הבאה</b-button>
       </div>
       <br>
@@ -115,22 +118,39 @@
           :size="''"
           :variant="'primary'"
           href="prolific.co"
-      >סיום תיוג
+      >To Prolific
       </b-button>
       <br>
       <br>
-      <b-button
+      <!-- <b-button
           :size="''"
           :variant="'primary'"
           v-on:click="getRandomFile()"
       >תנו לי עוד אחד
-      </b-button>
+      </b-button> -->
     </div>
   </div>
 </template>
 
 <script>
+import firebase from 'firebase'
+const config ={
+        apiKey: "AIzaSyB70IFdsSJ056tK0OWqEJMEnzhRQuAHuPI",
+        authDomain: "parashot-88db8.firebaseapp.com",
+        projectId: "parashot-88db8",
+        storageBucket: "parashot-88db8.appspot.com",
+        messagingSenderId: "754346365422",
+        appId: "1:754346365422:web:3a3c5096fed773e4237eff",
+        measurementId: "G-8Q98XS0NPJ"
+}
+const firebaseApp = firebase.initializeApp(config)
 
+const db = firebaseApp.firestore()
+const userCollection = db.collection('users')
+
+export const addAnnotationToDB = tag => {
+    return userCollection.add(tag)
+}
 const uuidv4 = require('uuid/v4');
 
 export default {
@@ -147,8 +167,7 @@ export default {
       message: "",
       errors: "",
       textSelected: false,
-      publicPath: process.env.BASE_URL,
-
+      toEnd: false,
       withAnswer:true
     };
   },
@@ -167,14 +186,12 @@ export default {
       this.question = "";
       this.answer = "";
       this.textSelected = false;
-      this.saveJSON()
     },
     deleteAnnotation: function(row_index) {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
       paragraph_container.qas.splice(row_index, 1);
-      this.saveJSON()
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
@@ -193,7 +210,7 @@ export default {
     },
     checkAnswers: function(){
       // eslint-disable-next-line no-console
-      console.log(this)
+      // console.log(this)
       if(this.question == "" || this.answer ==""){
         this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
         return false;
@@ -203,16 +220,33 @@ export default {
           return true;
       }
     },
-    saveJSON: function () {
-      // this.axios.post("URL/upload",
-      //     {
-      //       'json_data': JSON.stringify(this.json),
-      //       'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + this.uuid + "_" + this.json.prolificID + ".json"
-      //     }
-      // ).catch(error => {
-      //   this.errorMessage = error;
-      //   window.alert('There was an error saving the JSON file.', error);
-      // });
+    saveJSON: async function (type) {
+      if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
+      if(type == "end")
+        this.toEnd = true;
+      var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
+        chr
+      ) {
+        return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
+      });
+      let tosend = {
+        'json_data': json1,
+        'prolificID': this.json.prolificID,
+        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + "Tagged" + ".json"
+      }
+      await addAnnotationToDB(tosend);
+    },
+    getAnotherFile: async function () {
+      this.saveJSON("continue");
+      this.jsonID = this.getRandomInt(21, 399).toString();
+      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
+      this.json.jsonID = this.jsonID;
+      this.data_number = 1;
+    },
+    getRandomInt: function (min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     pad: function (num, size) {
       while (num.length < size) num = "0" + num;

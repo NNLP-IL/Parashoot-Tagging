@@ -126,7 +126,7 @@ export default {
     getRandomFile: function () {// When pressing the button!!!
       if(this.checkID() == true)
       {
-        this.jsonID = this.getRandomInt(21, 36).toString();
+        this.jsonID = this.getRandomInt(21, 399).toString();
         this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
         this.json.jsonID = this.jsonID;
         this.json.prolificID = this.prolificID;
