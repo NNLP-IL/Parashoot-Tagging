@@ -39,30 +39,28 @@
     <br>
     <div v-if="this.toEnd == false">
       <!-- <h2>{{ json.data[data_number - 1].title }}</h2> -->
-      <span
+      <!-- <span
         class="text-muted" dir="rtl" 
-      >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span>
+      >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span> -->
       <br>
+      <div class="demo">
       <br>
       <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
+      <div><b>בחרו סוג שאלה שברצונכם להוסיף:</b></div>
+        <input type="radio" id="one" value=true v-model="withAnswer" />
+        <label for="one">שאלה ש<b>יש</b> לה מענה בפסקה</label>
+        <br>
+        <input type="radio" id="two" value=false v-model="withAnswer"/>
+        <label for="two">שאלה ש<b>אין</b> לה מענה בפסקה</label>
+        <br>
+        <br>
+      </div>
       <br>
-
       <b-form-input v-model="question" type="text" placeholder="הקלידו שאלה לגבי הטקסט..." dir="rtl"></b-form-input>
       <br>
 
       <b-form-input v-model="answer" type="text" placeholder="סמנו תשובה מתוך הפסקה - היא תופיע פה" dir="rtl"></b-form-input>
       <br>
-
-      <div class="demo">
-        <div>סוג שאלה:</div>
-        <input type="radio" id="one" value=true v-model="withAnswer" />
-        <label for="one">שאלה עם תשובה בטקסט</label>
-        <br>
-        <input type="radio" id="two" value=false v-model="withAnswer"/>
-        <label for="two">שאלה שאין לה תשובה בטקסט</label>
-        <br>
-        <br>
-      </div>
       <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
       <br>
       <br>
@@ -112,7 +110,15 @@
       <br>
     </div>
     <div v-else>
-     תיוג מסמך הסתיים בהצלחה
+  <h3>תודה רבה על ההשתתפות!
+    <img
+          src="../assets/ablobmaracas.gif"
+          height="30"
+          width="30"
+      >
+  </h3>
+<h5>זהו קוד סיום המשימה: {קוד יופיע פה}</h5>
+<h5>העתיקו אותו כדי לדווח ב-Prolific שסיימתם את המשימה</h5>
      <br>
       <b-button
           :size="''"
@@ -221,9 +227,9 @@ export default {
       }
     },
     saveJSON: async function (type) {
-      if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
       if(type == "end")
         this.toEnd = true;
+      if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
       var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
         chr
       ) {
@@ -237,10 +243,12 @@ export default {
       await addAnnotationToDB(tosend);
     },
     getAnotherFile: async function () {
+      let pro = this.json.prolificID;
       this.saveJSON("continue");
       this.jsonID = this.getRandomInt(21, 399).toString();
       this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
       this.json.jsonID = this.jsonID;
+      this.json.prolificID = pro;
       this.data_number = 1;
     },
     getRandomInt: function (min, max) {

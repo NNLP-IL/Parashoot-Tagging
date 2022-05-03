@@ -40,11 +40,11 @@
       <br><br> -->
       <!-- <h5>אם אין לכם קובץ להעלות בחרו באופציה הבאה:</h5> -->
       <br>
-      <h5>Prolific ID</h5><input v-model="prolificID" placeholder="להכניס Prolific ID פה" />
+      <h5>הדביקו כאן את ה-Prolific ID שלכם:</h5><input v-model="prolificID" placeholder="Prolific ID"  align="left"/>
       <br>
       <p style="color:red;">{{ errors }}</p>
       <br>
-      <b-button :size="''" :variant="'primary'" v-on:click="getRandomFile()">Annotate Random Paragraph</b-button>
+      <b-button :size="''" :variant="'primary'" v-on:click="getRandomFile()">בואו נתחיל</b-button>
     </div>
   </div>
 </template>
@@ -115,7 +115,7 @@ export default {
       // eslint-disable-next-line no-console
       // console.log(this)
       if(this.prolificID == ""){
-        this.errors = "צריך להכניס ID כדי לתייג";
+        this.errors = "שדה חובה";
         return false;
       }
       else{
