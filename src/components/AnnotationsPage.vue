@@ -3,15 +3,15 @@
     <div>
       <b-navbar sticky toggleable="lg" class="pl-0">
         <b-navbar-brand>cdQA-annotator - Welcome User Number {{this.json.prolificID}}</b-navbar-brand>
-
+<!-- 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <b-collapse id="nav-collapse" is-nav>
+        <b-collapse id="nav-collapse" is-nav> -->
           <!-- Right aligned nav items -->
-          <b-navbar-nav class="ml-auto">
+          <!-- <b-navbar-nav class="ml-auto">
             <b-nav-item>
               <svg-progress-bar :value="data_number / json.data.length * 100" :options="options"></svg-progress-bar>
-            </b-nav-item>
+            </b-nav-item> -->
             <b-nav-form>
               <!-- <vue-bootstrap-typeahead
                 size="sm"
@@ -22,7 +22,7 @@
               /> -->
             </b-nav-form>
               <!-- <p>Message is: {{ message }}</p> -->
-            <b-nav-item right>
+            <!-- <b-nav-item right>
               <b-button
                 :size="'sm'"
                 :variant="'primary'"
@@ -32,8 +32,8 @@
                 v-download-data:filename="getName()"
               >Download</b-button>
             </b-nav-item>
-          </b-navbar-nav>
-        </b-collapse>
+          </b-navbar-nav> -->
+        <!-- </b-collapse> -->
       </b-navbar>
     </div>       
     <br>
@@ -47,19 +47,19 @@
       <br>
       <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
       <div><b>בחרו סוג שאלה שברצונכם להוסיף:</b></div>
-        <input type="radio" id="one" value=true v-model="withAnswer" />
+        <input type="radio" id="one" value=true v-model="withAnswer" v-on:change='managePlaceHolders()'  style="background-color= #689f38;  border-color= #689f38"/>
         <label for="one">שאלה ש<b>יש</b> לה מענה בפסקה</label>
         <br>
-        <input type="radio" id="two" value=false v-model="withAnswer"/>
+        <input type="radio" id="two" value=false v-model="withAnswer" v-on:change='managePlaceHolders()'/>
         <label for="two">שאלה ש<b>אין</b> לה מענה בפסקה</label>
         <br>
         <br>
       </div>
       <br>
-      <b-form-input v-model="question" type="text" placeholder="הקלידו שאלה לגבי הטקסט..." dir="rtl"></b-form-input>
+      <b-form-input v-model="question" :placeholder='this.questionPH' type="text"  dir="rtl"></b-form-input>
       <br>
 
-      <b-form-input v-model="answer" type="text" placeholder="סמנו תשובה מתוך הפסקה - היא תופיע פה" dir="rtl"></b-form-input>
+      <b-form-input v-model="answer" :placeholder='this.answerPH' type="text" dir="rtl" class="success--text"></b-form-input>
       <br>
       <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
       <br>
@@ -115,6 +115,7 @@
           src="../assets/ablobmaracas.gif"
           height="30"
           width="30"
+          alt = "כל הכבוד!"
       >
   </h3>
 <h5>זהו קוד סיום המשימה: {קוד יופיע פה}</h5>
@@ -153,7 +154,6 @@ const firebaseApp = firebase.initializeApp(config)
 
 const db = firebaseApp.firestore()
 const userCollection = db.collection('users')
-
 export const addAnnotationToDB = tag => {
     return userCollection.add(tag)
 }
@@ -174,7 +174,10 @@ export default {
       errors: "",
       textSelected: false,
       toEnd: false,
-      withAnswer:true
+      withAnswer:true,
+      questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
+      answerPH:"סמנו תשובה מתוך הפסקה"
+      
     };
   },
   methods: {
@@ -260,6 +263,11 @@ export default {
       while (num.length < size) num = "0" + num;
       return num;
     },
+    managePlaceHolders: function(){
+
+      this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
+      this.answerPH = this.withAnswer == "true" ? "סמנו תשובה מתוך הפסקה" :"סמנו תשובה מתקבלת על הדעת מתוך הפסקה";
+    },
     getName: function(){
       // eslint-disable-next-line no-console
       // console.log(this);
@@ -330,6 +338,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+  #one{
+     background-color: #689f38;
+    border-color: #689f38;
+  }
 </style>
 
 

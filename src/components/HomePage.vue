@@ -20,7 +20,7 @@
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://docs.google.com/document/d/1mkF5Q_cZcTbVkL91QEpU-QTUEhDmgJTfvkVB-6FQdKg/edit"
+  <b><a href="https://drive.google.com/file/d/1_arIKSy-fTqLihlsyMWl5pQ0v9NBrLuB/view?usp=sharing" target="_blank"
    > ההנחיות</a></b>.
     </h5> 
     מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.
