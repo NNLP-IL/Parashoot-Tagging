@@ -50,6 +50,17 @@
 </template>
 
 <script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2963075,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
+<script>
 import AnnotationsPage from "./AnnotationsPage.vue";
 
 export default {
@@ -84,7 +95,8 @@ export default {
       json: null,
       jsonID: null,
       errors: "",    
-      prolificID: "", 
+      prolificID: this.getParameterByName("PROLIFIC_PID"),
+      studyID : this.getParameterByName("STUDY_ID"), 
     };
   },
   methods: {
@@ -123,15 +135,26 @@ export default {
           return true;
       }
     },
-    getRandomFile: function () {// When pressing the button!!!
+    getRandomFile: async function () {// When pressing the button!!!
       if(this.checkID() == true)
       {
         this.jsonID = this.getRandomInt(21, 399).toString();
         this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
         this.json.jsonID = this.jsonID;
         this.json.prolificID = this.prolificID;
+        this.json.studyID = this.studyID;
         this.fileUploaded = true;
       }
+    },
+    getParameterByName: function (name) {
+      let queryDict = {};
+      location.search.substr(1).split("&").forEach(function (item) {
+        queryDict[item.split("=")[0]] = item.split("=")[1]
+      });
+      if (name in queryDict) {
+        return queryDict[name];
+      }
+      return "";
     },
     state: function (jsonID) {
       var intID = parseInt(jsonID)

@@ -45,30 +45,30 @@
       <br>
       <div class="demo">
       <br>
-      <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl">{{ paragraph_context }}</p>
+      <p ref="paragraph" v-selection.fix="{getSelection:getSelection}">{{ paragraph_context }}</p>
       <div><b>בחרו סוג שאלה שברצונכם להוסיף:</b></div>
-        <input type="radio" id="one" value=true v-model="withAnswer" v-on:change='managePlaceHolders()'  style="background-color= #689f38;  border-color= #689f38"/>
-        <label for="one">שאלה ש<b>יש</b> לה מענה בפסקה</label>
+        <input type="radio" id="one" value=true v-model="withAnswer" v-on:change='managePlaceHolders()' :style ="{'accent-color': 'green'}"
+        />
+        <label for="one" :style="{ 'background-color': '#dbfcd7' , 'opacity': 1 ,  'color': 'black' }">שאלה ש<b>יש</b> לה מענה בפסקה</label>
         <br>
-        <input type="radio" id="two" value=false v-model="withAnswer" v-on:change='managePlaceHolders()'/>
-        <label for="two">שאלה ש<b>אין</b> לה מענה בפסקה</label>
+        <input type="radio" id="two" value=false v-model="withAnswer" v-on:change='managePlaceHolders()' :style="{'accent-color': 'red'}" />
+        <label for="two" :style="{ 'background-color': '#f7dcdc' , 'opacity': 1 ,  'color': 'black' }">שאלה ש<b>אין</b> לה מענה בפסקה</label>
         <br>
         <br>
       </div>
       <br>
-      <b-form-input v-model="question" :placeholder='this.questionPH' type="text"  dir="rtl"></b-form-input>
+      <b-form-input v-model="question" :placeholder='this.questionPH' :style="{ 'background-color': borderColor , 'opacity': 1 ,  'color': 'black' }"  type="text"></b-form-input>
       <br>
 
-      <b-form-input v-model="answer" :placeholder='this.answerPH' type="text" dir="rtl" class="success--text"></b-form-input>
+      <b-form-input v-model="answer" :placeholder='this.answerPH' :style="{ 'background-color': borderColor , 'opacity': 1 , 'color': 'black'}" type="text"></b-form-input>
       <br>
-      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
-      <br>
+      <b-button :size="''" :variant="buttonCss" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
       <br>
       <p style="color:red;">{{ errors }}</p>
       <br>
       <br>
 
-      <b-table striped hover :items="items" :fields="fields">
+      <b-table striped hover :items="items" :fields="fields" >
         <template slot="עריכה" slot-scope="row">
           <b-button :size="''" :variant="'danger'" @click.stop="deleteAnnotation(row.index)">Delete</b-button>
         </template>
@@ -78,7 +78,7 @@
       <div v-if="data_number > 1 && context_number == 1">
         <b-button
           :size="''"
-          :variant="'outline-secondary'"
+          :variant="'outline-primary'"
           v-on:click="saveJSON('end')"
         >סיימתי</b-button>
          או 
@@ -87,7 +87,7 @@
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
-          :variant="'outline-secondary'"
+          :variant="'outline-primary'"
           v-on:click="saveJSON('end')"
         >סיימתי</b-button>
          או 
@@ -151,11 +151,31 @@ const config ={
         measurementId: "G-8Q98XS0NPJ"
 }
 const firebaseApp = firebase.initializeApp(config)
-
 const db = firebaseApp.firestore()
-const userCollection = db.collection('users')
+const annotations = db.collection('annotations')
+const enters = db.collection('enters')
+const ends = db.collection('ends')
+const d = new Date();
+
+function JSClock() {
+  const time = new Date();
+  const hour = time.getHours();
+  const minute = time.getMinutes();
+  const second = time.getSeconds();
+  let temp = time.getDate()+'_'+(time.getMonth()+1)+'_'+time.getFullYear()+'_'+hour+'_';
+  temp += ((minute < 10) ? '0' : '') + minute +'_';
+  temp += ((second < 10) ? '0' : '') + second;
+  return temp;
+}
+
+export const addEnterance = tag => {
+    return enters.add(tag)
+}
+export const addEnds = tag => {
+    return ends.add(tag)
+}
 export const addAnnotationToDB = tag => {
-    return userCollection.add(tag)
+    return annotations.add(tag)
 }
 const uuidv4 = require('uuid/v4');
 
@@ -176,8 +196,8 @@ export default {
       toEnd: false,
       withAnswer:true,
       questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
-      answerPH:"סמנו תשובה מתוך הפסקה"
-      
+      answerPH:"סמנו תשובה מתוך הפסקה",
+      borderColor:"#dbfcd7"      
     };
   },
   methods: {
@@ -217,6 +237,18 @@ export default {
         }
       }
     },
+    endStamp:function(){
+      if(this.prolificID != 'Roi')
+        {
+          let data = {
+            started:JSClock(),
+            prolificID: this.prolificID,
+            studyID: this.studyID
+          }
+          let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
+          db.collection("ends").doc(docName).set(data)
+        }
+    },
     checkAnswers: function(){
       // eslint-disable-next-line no-console
       // console.log(this)
@@ -231,7 +263,10 @@ export default {
     },
     saveJSON: async function (type) {
       if(type == "end")
+      {
         this.toEnd = true;
+        this.endStamp();
+      }
       if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
       var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
         chr
@@ -241,17 +276,23 @@ export default {
       let tosend = {
         'json_data': json1,
         'prolificID': this.json.prolificID,
-        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + "Tagged" + ".json"
+        'studyID':this.json.studyID,
+        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + "Tagged" + ".json",
+        'timeStamp': d.toString()
       }
-      await addAnnotationToDB(tosend);
+      let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 3)+"_"+JSClock();
+      db.collection("annotations").doc(docName).set(tosend)
+      // await addAnnotationToDB(tosend);
     },
     getAnotherFile: async function () {
       let pro = this.json.prolificID;
+      let studID = this.json.studyID;
       this.saveJSON("continue");
       this.jsonID = this.getRandomInt(21, 399).toString();
       this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
       this.json.jsonID = this.jsonID;
       this.json.prolificID = pro;
+      this.json.studyID = studID;
       this.data_number = 1;
     },
     getRandomInt: function (min, max) {
@@ -267,6 +308,7 @@ export default {
 
       this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
       this.answerPH = this.withAnswer == "true" ? "סמנו תשובה מתוך הפסקה" :"סמנו תשובה מתקבלת על הדעת מתוך הפסקה";
+      this.borderColor = this.withAnswer == "true" ? "#dbfcd7" :"#f7dcdc";
     },
     getName: function(){
       // eslint-disable-next-line no-console
@@ -278,6 +320,18 @@ export default {
       return "annotated_data_" + tmpJsonID + ".json";
     }
   },
+  beforeMount(){
+    if(this.json.prolificID != 'Roi')
+        {
+          let data = {
+            started:d.toString(),
+            prolificID: this.json.prolificID,
+            studyID: this.json.studyID
+          }
+            let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
+            db.collection("enters").doc(docName).set(data)
+        }
+ },
   computed: {
     valid_json: function() {
       var json = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
@@ -294,17 +348,26 @@ export default {
       }
       return idx;
     },
+    buttonCss: function() {
+      return this.withAnswer== "false"? 'danger' : 'success'
+    },
     items: function() {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
+      let color = "";
       var items = [];
       for (var i = 0; i < paragraph_container.qas.length; i++) {
+        if(paragraph_container.qas[i].answers[0].withAnswer== true || paragraph_container.qas[i].answers[0].withAnswer== "true")
+            color = "success";
+        else
+             color = "danger";
         var item = {
           // fields: ["שאלות", "תשובות", "עריכה" , "יש-תשובה"]
           שאלות: paragraph_container.qas[i].question,
           תשובות: paragraph_container.qas[i].answers[0].text,
-          'יש תשובה בטקסט': paragraph_container.qas[i].answers[0].withAnswer
+          'יש תשובה בטקסט': paragraph_container.qas[i].answers[0].withAnswer,
+          _rowVariant: color
         };
         items.push(item);
       }
@@ -334,6 +397,17 @@ export default {
     }
   }
 };
+</script>
+
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2963075,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
