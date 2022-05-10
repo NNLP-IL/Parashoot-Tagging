@@ -118,14 +118,14 @@
           alt = "כל הכבוד!"
       >
   </h3>
-<h5>זהו קוד סיום המשימה: {קוד יופיע פה}</h5>
-<h5>העתיקו אותו כדי לדווח ב-Prolific שסיימתם את המשימה</h5>
+<!-- <h5>זהו קוד סיום המשימה: {קוד יופיע פה}</h5>
+<h5>העתיקו אותו כדי לדווח ב-Prolific שסיימתם את המשימה</h5> -->
      <br>
       <b-button
           :size="''"
           :variant="'primary'"
-          href="prolific.co"
-      >To Prolific
+          href="https://app.prolific.co/submissions/complete?cc=PROLIFIC_PROJECT_ID"
+      >סיימתי
       </b-button>
       <br>
       <br>
