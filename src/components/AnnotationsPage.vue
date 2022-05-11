@@ -124,7 +124,7 @@
       <b-button
           :size="''"
           :variant="'primary'"
-          href="https://app.prolific.co/submissions/complete?cc=PROLIFIC_PROJECT_ID"
+          href="https://app.prolific.co/submissions/complete?cc=72552206"
       >סיימתי
       </b-button>
       <br>
@@ -306,7 +306,7 @@ export default {
     },
     managePlaceHolders: function(){
 
-      this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
+      this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה...": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
       this.answerPH = this.withAnswer == "true" ? "סמנו תשובה מתוך הפסקה" :"סמנו תשובה מתקבלת על הדעת מתוך הפסקה";
       this.borderColor = this.withAnswer == "true" ? "#dbfcd7" :"#f7dcdc";
     },
