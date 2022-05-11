@@ -20,7 +20,7 @@
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/1oH4tvwa9FvMLoNP1rzaguKFuofhcJJ8f/view?usp=sharing" target="_blank"
+  <b><a href="https://drive.google.com/file/d/1oH4tvwa9FvMLoNP1rzaguKFuofhcJJ8f/view?usp=sharing" target="_blank" v-on:click="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.
@@ -85,7 +85,8 @@ export default {
       jsonID: null,
       errors: "",    
       prolificID: this.getParameterByName("PROLIFIC_PID"),
-      studyID : this.getParameterByName("STUDY_ID"), 
+      studyID : this.getParameterByName("STUDY_ID"),
+      guide:null,
     };
   },
   methods: {
@@ -112,12 +113,19 @@ export default {
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
+    guideClicked: function () {
+      this.guide = "pass"
+    },
     checkID: function(){
       // eslint-disable-next-line no-console
       // console.log(this)
       if(this.prolificID == ""){
         this.errors = "שדה חובה";
         return false;
+      }
+      else if(this.guide != "pass"){
+          this.errors = "חובה לקרוא את ההנחיות לפני שמתחילים";
+        return false
       }
       else{
           this.errors = "";
