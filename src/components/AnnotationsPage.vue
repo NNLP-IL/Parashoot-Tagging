@@ -125,7 +125,7 @@
           :size="''"
           :variant="'primary'"
           href="https://app.prolific.co/submissions/complete?cc=72552206"
-      >סיימתי
+      >בחזרה לפרוליפיק
       </b-button>
       <br>
       <br>
