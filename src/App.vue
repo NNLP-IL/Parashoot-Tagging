@@ -6,6 +6,12 @@
 
 <script>
 import HomePage from './components/HomePage.vue'
+import Vue from 'vue'
+import Hotjar from 'vue-hotjar'
+
+Vue.use (Hotjar, {
+  id: '2963075',
+})
 
 export default {
   name: 'app',
