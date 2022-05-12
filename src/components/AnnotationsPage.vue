@@ -38,7 +38,7 @@
     </div>       
     <br>
     <div v-if="this.toEnd == false">
-      <!-- <h2>{{ json.data[data_number - 1].title }}</h2> -->
+      <h2>פסקה מספר {{ this.pad(this.json.jsonID, 3)}}</h2>
       <!-- <span
         class="text-muted" dir="rtl" 
       >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span> -->
@@ -74,7 +74,6 @@
         </template>
       </b-table>
       <br>
-
       <div v-if="data_number > 1 && context_number == 1">
         <b-button
           :size="''"
@@ -246,7 +245,7 @@ export default {
             studyID: this.studyID
           }
           let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
-          db.collection("ends").doc(docName).set(data)
+          db.collection("ends").doc(docName).set(data);
         }
     },
     checkAnswers: function(){
@@ -262,11 +261,6 @@ export default {
       }
     },
     saveJSON: async function (type) {
-      if(type == "end")
-      {
-        this.toEnd = true;
-        this.endStamp();
-      }
       if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
       var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
         chr
@@ -281,7 +275,12 @@ export default {
         'timeStamp': d.toString()
       }
       let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 3)+"_"+JSClock();
-      db.collection("annotations").doc(docName).set(tosend)
+      db.collection("annotations").doc(docName).set(tosend);
+      if(type == "end")
+      {
+        this.toEnd = true;
+        this.endStamp();
+      }
       // await addAnnotationToDB(tosend);
     },
     getAnotherFile: async function () {

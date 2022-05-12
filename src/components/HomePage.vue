@@ -21,10 +21,11 @@
   <br>
   <b><u>התשובה</u></b> היא <b>מילה או מחרוזת מילים מתוך הפסקה</b>, ואותה תסמנו על גבי הפסקה באמצעות העכבר.
   <br>
+  משך המשימה הוא <b><u>שעה וחצי</u></b>
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/1oH4tvwa9FvMLoNP1rzaguKFuofhcJJ8f/view?usp=sharing" target="_blank" v-on:click="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1RjwRR3KwmbpxUQb2XhT0QW0SgBMwhpir/view?usp=sharing" target="_blank" v-on:click="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
