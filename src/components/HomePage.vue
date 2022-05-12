@@ -25,7 +25,7 @@
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/1RjwRR3KwmbpxUQb2XhT0QW0SgBMwhpir/view?usp=sharing" target="_blank" v-on:click="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1RmY3YzA8QfPmBnW_FKhU4t0jTw5P4472/view?usp=sharing" target="_blank" v-on:click="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
