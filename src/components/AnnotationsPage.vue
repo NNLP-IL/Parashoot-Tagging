@@ -240,7 +240,7 @@ export default {
       if(this.prolificID != 'Roi')
         {
           let data = {
-            started:JSClock(),
+            ended:d.toString(),
             prolificID: this.json.prolificID,
             studyID: this.json.studyID
           }
@@ -261,6 +261,11 @@ export default {
       }
     },
     saveJSON: async function (type) {
+      if(type == "end")
+      {
+        this.toEnd = true;
+        this.endStamp();
+      }
       if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
       var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
         chr
@@ -276,11 +281,6 @@ export default {
       }
       let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 3)+"_"+JSClock();
       db.collection("annotations").doc(docName).set(tosend);
-      if(type == "end")
-      {
-        this.toEnd = true;
-        this.endStamp();
-      }
       // await addAnnotationToDB(tosend);
     },
     getAnotherFile: async function () {
