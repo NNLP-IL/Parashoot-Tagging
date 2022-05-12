@@ -241,8 +241,8 @@ export default {
         {
           let data = {
             started:JSClock(),
-            prolificID: this.prolificID,
-            studyID: this.studyID
+            prolificID: this.json.prolificID,
+            studyID: this.json.studyID
           }
           let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
           db.collection("ends").doc(docName).set(data);
