@@ -276,10 +276,10 @@ export default {
         'json_data': json1,
         'prolificID': this.json.prolificID,
         'studyID':this.json.studyID,
-        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 3) + "_" + "Tagged" + ".json",
+        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 6) + "_" + "Tagged" + ".json",
         'timeStamp': d.toString()
       }
-      let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 3)+"_"+JSClock();
+      let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 6)+"_"+JSClock();
       db.collection("annotations").doc(docName).set(tosend);
       // await addAnnotationToDB(tosend);
     },
@@ -288,7 +288,7 @@ export default {
       let studID = this.json.studyID;
       this.saveJSON("continue");
       this.jsonID = this.getRandomInt(21, 399).toString();
-      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
+      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
       this.json.jsonID = this.jsonID;
       this.json.prolificID = pro;
       this.json.studyID = studID;

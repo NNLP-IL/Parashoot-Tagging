@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     readFile: function (jsonID) {
-      this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(jsonID, 4) + ".json");
+      this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(jsonID, 6) + ".json");
       this.json.jsonID = jsonID;
       this.fileUploaded = true;
     },
@@ -142,7 +142,7 @@ export default {
       if(this.checkID() == true)
       {
         this.jsonID = this.getRandomInt(21, 399).toString();
-        this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 3) + ".json");
+        this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
         this.json.jsonID = this.jsonID;
         this.json.prolificID = this.prolificID;
         this.json.studyID = this.studyID;
