@@ -95,7 +95,7 @@
       <div v-else>
         <b-button
           :size="''"
-          :variant="'outline-secondary'"
+          :variant="'outline-primary'"
           v-on:click="saveJSON('end')"
         >סיימתי</b-button> 
         או 
