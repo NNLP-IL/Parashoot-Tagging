@@ -38,7 +38,7 @@
     </div>       
     <br>
     <div v-if="this.toEnd == false">
-      <h2>פסקה מספר {{ this.pad(this.json.jsonID, 3)}}</h2>
+      <h2>פסקה מספר {{ this.pad(this.json.jsonID, 6)}}</h2>
       <!-- <span
         class="text-muted" dir="rtl" 
       >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span> -->
