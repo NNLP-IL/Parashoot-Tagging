@@ -46,7 +46,7 @@
       <br><br> -->
       <!-- <h5>אם אין לכם קובץ להעלות בחרו באופציה הבאה:</h5> -->
       <br>
-      <h5>הדביקו כאן את ה-Prolific ID שלכם:</h5><input v-model="prolificID" placeholder="Prolific ID"  align="left"/>
+      <!-- <h5>הדביקו כאן את ה-Prolific ID שלכם:</h5><input v-model="prolificID" placeholder="Prolific ID"  align="left"/> -->
       <br>
       <p style="color:red;">{{ errors }}</p>
       <br>
