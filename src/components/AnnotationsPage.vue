@@ -139,18 +139,9 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-const config ={
-        apiKey: "AIzaSyB70IFdsSJ056tK0OWqEJMEnzhRQuAHuPI",
-        authDomain: "parashot-88db8.firebaseapp.com",
-        projectId: "parashot-88db8",
-        storageBucket: "parashot-88db8.appspot.com",
-        messagingSenderId: "754346365422",
-        appId: "1:754346365422:web:3a3c5096fed773e4237eff",
-        measurementId: "G-8Q98XS0NPJ"
-}
-const firebaseApp = firebase.initializeApp(config)
-const db = firebaseApp.firestore()
+import firebase from '../firebase'
+
+const db = firebase.firestore()
 const annotations = db.collection('annotations')
 const enters = db.collection('enters')
 const ends = db.collection('ends')
