@@ -155,9 +155,11 @@ export default {
     },
     getOpenNumber: function(){
       let num;
+      let rand =0;
       do{
+        rand = rand +1;
         num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.alreadyAnnotatedFiles.includes(this.pad(num, 6)));
+      }while(this.alreadyAnnotatedFiles.includes(this.pad(num, 6)) && rand < 100);
       return num;
     },
     getParameterByName: function (name) {
