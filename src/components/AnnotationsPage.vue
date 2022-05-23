@@ -1,276 +1,297 @@
 <template>
   <div class="AnnotationsPage container mt-3">
-    <div class="accordion" role="tablist">
-      <b-card no-body class="mb-1">
-        <b-card-header header-tag="header" class="p-1 center" role="tab">
-          <b-button block v-b-toggle.accordion-1 variant="info"><b>General Instructions</b> <br/>** Please
-            read
-            carefully before starting the annotation! **
-          </b-button>
-        </b-card-header>
-        <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <b-card-text>
-              <ul>
-                <li>For each paragraph, type a question in the appropriate textbox and then select the
-                  <b>minimal</b>
-                  span of characters from the paragraph that contains the answer. The answer text
-                  should
-                  appear automatically in the answer prompt.
-                </li>
-                <li>Try to write questions using your own words as much as possible.</li>
-                <li>Please make sure to write no more than<b> 5 questions </b>per paragraph (but
-                  preferably 3
-                  at
-                  least).
-                </li>
-                <li>
-                  You can save your work any time by clicking on the <b>Download</b> button below.
-                </li>
-                <li>
-                  <b> Do not refresh the web page unless you downloaded your annotation file
-                    first! </b>
-                  (Otherwise
-                  your work will be lost.)
-                </li>
-                <li>You can finish the annotation and quit any time by clicking on the <b>Finish</b> button.</li>
-                <li>
-                  Thank you very much for your effort!
-                </li>
-              </ul>
-            </b-card-text>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-    </div>
     <div>
       <b-navbar sticky toggleable="lg" class="pl-0">
-        <b-navbar-brand>cdQA-annotator</b-navbar-brand>
-
+        <b-navbar-brand>cdQA-annotator - Welcome User Number {{this.json.prolificID}}</b-navbar-brand>
+<!-- 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <b-collapse id="nav-collapse" is-nav>
+        <b-collapse id="nav-collapse" is-nav> -->
           <!-- Right aligned nav items -->
-          <b-navbar-nav class="ml-auto" justified>
+          <!-- <b-navbar-nav class="ml-auto">
             <b-nav-item>
-              <svg-progress-bar :value="data_number / json.data.length * 100"
-                                :options="options"></svg-progress-bar>
-            </b-nav-item>
-            <b-nav-item>
+              <svg-progress-bar :value="data_number / json.data.length * 100" :options="options"></svg-progress-bar>
+            </b-nav-item> -->
+            <b-nav-form>
+              <!-- <vue-bootstrap-typeahead
+                size="sm"
+                v-model="query"
+                :data="autocomplete"
+                placeholder="Search a document..."
+                @hit="data_number = autocomplete.indexOf($event) + 1; context_number = 1"
+              /> -->
+            </b-nav-form>
+              <!-- <p>Message is: {{ message }}</p> -->
+            <!-- <b-nav-item right>
               <b-button
-                  :variant="'primary'"
-                  v-on:click="delete_empty_document()"
-                  v-download-data="valid_json"
-                  v-download-data:type="'json'"
-                  v-download-data:filename="get_downloaded_file_name()"
-              >Download
-              </b-button>
+                :size="'sm'"
+                :variant="'primary'"
+                v-on:click="delete_empty_document()"
+                v-download-data="valid_json"
+                v-download-data:type="'json'"
+                v-download-data:filename="getName()"
+              >Download</b-button>
             </b-nav-item>
-            <b-nav-item active href="https://app.prolific.co/submissions/complete?cc=PROLIFIC_PROJECT_ID">
-              <b-button
-                  :variant="'primary'"
-                  href="https://app.prolific.co/submissions/complete?cc=PROLIFIC_PROJECT_ID"
-              >Finish
-              </b-button>
-            </b-nav-item>
-          </b-navbar-nav>
-        </b-collapse>
+          </b-navbar-nav> -->
+        <!-- </b-collapse> -->
       </b-navbar>
-    </div>
+    </div>       
     <br>
-    <div v-if="data_number - 1 < json.data.length" dir="rtl">
-      <h2 dir="rtl" class="text-right">{{ json.data[data_number - 1].title }}</h2>
-      <span
-          class="text-muted" dir="rtl"
-      >Paragraph {{ context_number }} of {{ json.data[data_number - 1].paragraphs.length }} | Document {{ data_number }} of {{
-          json.data.length
-        }}</span>
+    <div v-if="this.toEnd == false">
+      <h2>פסקה מספר {{ this.pad(this.json.jsonID, 6)}}</h2>
+      <!-- <span
+        class="text-muted" dir="rtl" 
+      >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span> -->
       <br>
+      <div class="demo">
       <br>
-      <p ref="paragraph" v-selection.fix="{getSelection:getSelection}" dir="rtl" class="text-right">{{
-          paragraph_context
-        }}</p>
+      <p ref="paragraph" v-selection.fix="{getSelection:getSelection}">{{ paragraph_context }}</p>
+      <div><b>בחרו סוג שאלה שברצונכם להוסיף:</b></div>
+        <input type="radio" id="one" value=true v-model="withAnswer" v-on:change='managePlaceHolders()' :style ="{'accent-color': 'green'}"
+        />
+        <label for="one" :style="{ 'background-color': '#dbfcd7' , 'opacity': 1 ,  'color': 'black' }">שאלה ש<b>יש</b> לה מענה בפסקה</label>
+        <br>
+        <input type="radio" id="two" value=false v-model="withAnswer" v-on:change='managePlaceHolders()' :style="{'accent-color': 'red'}" />
+        <label for="two" :style="{ 'background-color': '#f7dcdc' , 'opacity': 1 ,  'color': 'black' }">שאלה ש<b>אין</b> לה מענה בפסקה</label>
+        <br>
+        <br>
+      </div>
+      <br>
+      <b-form-input v-model="question" :placeholder='this.questionPH' :style="{ 'background-color': borderColor , 'opacity': 1 ,  'color': 'black' }"  type="text"></b-form-input>
       <br>
 
-      <b-form-input v-model="question" type="text" placeholder="Type question here..." dir="rtl"></b-form-input>
+      <b-form-input v-model="answer" :placeholder='this.answerPH' :style="{ 'background-color': borderColor , 'opacity': 1 , 'color': 'black'}" type="text"></b-form-input>
       <br>
-
-      <b-form-input v-model="answer" type="text" placeholder="Type answer here..." dir="rtl"></b-form-input>
+      <b-button :size="''" :variant="buttonCss" v-on:click="addAnnotation()">הוספת שאלה ותשובה</b-button> 
       <br>
-
-      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button>
+      <p style="color:red;">{{ errors }}</p>
       <br>
       <br>
 
-      <b-table striped hover :items="items" :fields="fields">
-        <template #cell(Edit)="row">
+      <b-table striped hover :items="items" :fields="fields" >
+        <template slot="עריכה" slot-scope="row">
           <b-button :size="''" :variant="'danger'" @click.stop="deleteAnnotation(row.index)">Delete</b-button>
         </template>
       </b-table>
       <br>
-
       <div v-if="data_number > 1 && context_number == 1">
         <b-button
-            :size="''"
-            :variant="'outline-secondary'"
-            v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
-        >Previous
-        </b-button>
-        or
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+          :size="''"
+          :variant="'outline-primary'"
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button>
+         או 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
-            :size="''"
-            :variant="'outline-secondary'"
-            v-on:click="context_number -= 1"
-        >Previous
-        </b-button>
-        or
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+          :size="''"
+          :variant="'outline-primary'"
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button>
+         או 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
       <div v-else>
         <b-button
-            :size="''"
-            :variant="'outline-secondary'"
-            v-on:click="context_number -= 1"
-        >Previous
-        </b-button>
-        or
+          :size="''"
+          :variant="'outline-primary'"
+          v-on:click="saveJSON('end')"
+        >סיימתי</b-button> 
+        או 
         <b-button
-            :size="''"
-            :variant="'outline-primary'"
-            v-on:click="data_number += 1, context_number = 1, getNextBatch()"
-        >Next
-        </b-button>
+          :size="''"
+          :variant="'outline-primary'"
+          v-on:click="getAnotherFile()"
+        >לפסקה הבאה</b-button>
       </div>
       <br>
       <br>
     </div>
     <div v-else>
-      There are no more data to annotate. You can either quit or continue to the next annotation batch.
-      <img
+  <h3>תודה רבה על ההשתתפות!
+    <img
           src="../assets/ablobmaracas.gif"
           height="30"
           width="30"
+          alt = "כל הכבוד!"
       >
-      <br>
+  </h3>
+<!-- <h5>זהו קוד סיום המשימה: {קוד יופיע פה}</h5>
+<h5>העתיקו אותו כדי לדווח ב-Prolific שסיימתם את המשימה</h5> -->
+     <br>
       <b-button
           :size="''"
           :variant="'primary'"
-          href="https://app.prolific.co/submissions/complete?cc=PROLIFIC_PROJECT_ID"
-      >Finish Annotation
+          href="https://app.prolific.co/submissions/complete?cc=49582377"
+      >בחזרה לפרוליפיק
       </b-button>
       <br>
       <br>
-      <b-button
+      <!-- <b-button
           :size="''"
           :variant="'primary'"
           v-on:click="getRandomFile()"
-      >Gimme another one!
-      </b-button>
+      >תנו לי עוד אחד
+      </b-button> -->
     </div>
   </div>
 </template>
 
 <script>
+import firebase from '../firebase'
 
+const db = firebase.firestore()
+const annotations = db.collection('annotations')
+const enters = db.collection('enters')
+const ends = db.collection('ends')
+const d = new Date();
+
+function JSClock() {
+  const time = new Date();
+  const hour = time.getHours();
+  const minute = time.getMinutes();
+  const second = time.getSeconds();
+  let temp = time.getDate()+'_'+(time.getMonth()+1)+'_'+time.getFullYear()+'_'+hour+'_';
+  temp += ((minute < 10) ? '0' : '') + minute +'_';
+  temp += ((second < 10) ? '0' : '') + second;
+  return temp;
+}
+
+export const addEnterance = tag => {
+    return enters.add(tag)
+}
+export const addEnds = tag => {
+    return ends.add(tag)
+}
+export const addAnnotationToDB = tag => {
+    return annotations.add(tag)
+}
 const uuidv4 = require('uuid/v4');
 
 export default {
   name: "AnnotationsPage",
-  props: ["json", "jsonID"],
-
-
-  data: function () {
+  props: ["json" ],
+  data: function() {
     return {
       data_number: 1,
       context_number: 1,
       question: "",
       answer: "",
-      selectedAnswer: "",
-      fields: ["Questions", "Answers", "Edit"],
+      fields: ["שאלות", "תשובות", "עריכה" , "יש תשובה בטקסט"],
       query: "",
-      publicPath: process.env.BASE_URL,
-      isSubmitted: false,
+      message: "",
+      errors: "",
       textSelected: false,
-      uuid: uuidv4(),
-      prolificUserId: this.getParameterByName()
+      toEnd: false,
+      withAnswer:true,
+      questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
+      answerPH:"סמנו תשובה מתוך הפסקה",
+      borderColor:"#dbfcd7",
+      min:21,
+      max:1389,
     };
   },
   methods: {
-    addAnnotation: function () {
-      if (!this.validateAnswer()) {
-        return;
-      }
-      let paragraph_container = this.json.data[this.data_number - 1].paragraphs[
-      this.context_number - 1
-          ];
-      let qa = {
+    addAnnotation: function() {
+      if(this.checkAnswers() == false) return
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
+      var qa = {
         question: this.question,
         id: uuidv4(),
-        answers: [{answer_start: this.answer_start, text: this.selectedAnswer}]
+        answers: [{ answer_start: this.answer_start, text: this.answer ,withAnswer:this.withAnswer }]
       };
-      if (this.selectedAnswer.length > 50) {
-        this.$confirm("The selected answer is too long! Are you sure you want to submit?").then(() => {
-          paragraph_container.qas.push(qa);
-          this.question = "";
-          this.answer = "";
-          this.selectedAnswer = "";
-          this.textSelected = false;
-          this.saveJSON();
-        });
-      } else {
-        paragraph_container.qas.push(qa);
-        this.question = "";
-        this.answer = "";
-        this.selectedAnswer = "";
-        this.textSelected = false;
-        this.saveJSON();
-      }
+      paragraph_container.qas.push(qa);
+      this.question = "";
+      this.answer = "";
+      this.textSelected = false;
     },
-    validateAnswer: function () {
-      if (this.question == '') {
-        window.alert('Please fill in a question!');
-        return false;
-      }
-      if (!this.textSelected || this.answer == '' || this.selectedAnswer != this.answer) {
-        window.alert('The answer text must be selected from the paragraph!');
-        return false;
-      }
-      return true;
-    },
-    deleteAnnotation: function (row_index) {
-      let paragraph_container = this.json.data[this.data_number - 1].paragraphs[
-      this.context_number - 1
-          ];
+    deleteAnnotation: function(row_index) {
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
       paragraph_container.qas.splice(row_index, 1);
-      this.saveJSON();
     },
-    getSelection: function (fixStr) {
+    getSelection: function(fixStr) {
       this.answer = fixStr;
-      this.selectedAnswer = fixStr;
       this.textSelected = true;
     },
-    delete_paragraph: function () {
-      let paragraph_container = this.json.data[this.data_number - 1].paragraphs;
+    delete_paragraph: function() {
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs;
       paragraph_container.splice([this.context_number - 1], 1);
-      this.saveJSON();
     },
-    delete_empty_document: function () {
+    delete_empty_document: function() {
       for (var i in this.json.data) {
         if (this.json.data[i].paragraphs.length == 0) {
           this.json.data.splice(i, 1);
         }
       }
     },
-    get_downloaded_file_name: function () {
-      let tmpJsonID = this.json.jsonID;
-      // delete this.json.jsonID;
-      return "annotated_data_" + tmpJsonID + ".json";
+    endStamp:function(){
+      if(this.prolificID != 'Roi')
+        {
+          let data = {
+            ended:d.toString(),
+            prolificID: this.json.prolificID,
+            studyID: this.json.studyID
+          }
+          let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
+          db.collection("ends").doc(docName).set(data);
+        }
     },
-    pad: function (num, size) {
-      while (num.length < size) num = "0" + num;
+    checkAnswers: function(){
+      // eslint-disable-next-line no-console
+      // console.log(this)
+      if(this.question == "" || this.answer ==""){
+        this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
+        return false;
+      }
+      else{
+          this.errors = "";
+          return true;
+      }
+    },
+    saveJSON: async function (type) {
+      if(type == "end")
+      {
+        this.toEnd = true;
+        this.endStamp();
+      }
+      if(this.json.data[this.data_number - 1].paragraphs[this.context_number - 1].qas.length == 0) return;//if page is empty do not save
+      var json1 = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
+        chr
+      ) {
+        return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
+      });
+      let tosend = {
+        'json_data': json1,
+        'prolificID': this.json.prolificID,
+        'studyID':this.json.studyID,
+        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 6) + "_" + "Tagged" + ".json",
+        'timeStamp': d.toString(),
+      }
+      let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 6)+"_"+JSClock();
+      db.collection("annotations").doc(docName).set(tosend);
+      // await addAnnotationToDB(tosend);
+    },
+    getAnotherFile: async function () {
+      let pro = this.json.prolificID;
+      let studID = this.json.studyID;
+      this.saveJSON("continue");
+      this.jsonID = this.getOpenNumber().toString();
+      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
+      this.json.jsonID = this.jsonID;
+      this.json.prolificID = pro;
+      this.json.studyID = studID;
+      this.data_number = 1;
+    },
+    getOpenNumber: function(){
+      let num;
+      do{
+        num =  this.getRandomInt(this.min, this.max).toString();
+      }while(this.toIgnore.includes(this.pad(num, 6)));
       return num;
     },
     getRandomInt: function (min, max) {
@@ -278,82 +299,99 @@ export default {
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
-    getRandomFile: function () {
-      this.jsonID = this.getRandomInt(21, 2684).toString();
-      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 4) + ".json");
-      this.json.jsonID = this.jsonID;
+    pad: function (num, size) {
+      while (num.length < size) num = "0" + num;
+      return num;
+    },
+    managePlaceHolders: function(){
 
-      this.data_number = 1;
-      this.uuid = uuidv4();
+      this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה...": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
+      this.answerPH = this.withAnswer == "true" ? "סמנו תשובה מתוך הפסקה" :"סמנו תשובה מתקבלת על הדעת מתוך הפסקה";
+      this.borderColor = this.withAnswer == "true" ? "#dbfcd7" :"#f7dcdc";
     },
-
-    saveJSON: function () {
-      this.json.prolificUserId = this.prolificUserId;
-      this.axios.post("URL/upload",
-          {
-            'json_data': JSON.stringify(this.json),
-            'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 4) + "_" + this.uuid + "_" + this.prolificUserId + ".json"
-          }
-      ).catch(error => {
-        this.errorMessage = error;
-        window.alert('There was an error saving the JSON file.', error);
-      });
-    },
-
-    getNextBatch: function () {
-      if (this.data_number - 1 < this.json.data.length) {
-        return true;
-      }
-      this.getRandomFile();
-    },
-    getParameterByName: function () {
-      let queryDict = {};
-      location.search.substr(1).split("&").forEach(function (item) {
-        queryDict[item.split("=")[0]] = item.split("=")[1]
-      });
-      if ("PROLIFIC_PID" in queryDict) {
-        return queryDict["PROLIFIC_PID"];
-      }
-      return "";
-    },
+    getName: function(){
+      // eslint-disable-next-line no-console
+      // console.log(this);
+      // this.filename 
+      // return this.json.data[0].title + " tagged";
+      let tmpJsonID = this.json.jsonID;
+      // delete this.json.jsonID;
+      return "annotated_data_" + tmpJsonID + ".json";
+    }
   },
+  beforeMount(){
+    if(this.json.prolificID != 'Roi')
+        {
+          let data = {
+            started:d.toString(),
+            prolificID: this.json.prolificID,
+            studyID: this.json.studyID
+          }
+            let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
+            db.collection("enters").doc(docName).set(data)
+        }
+ },
   computed: {
-    valid_json: function () {
-      let json = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function (
-          chr
+    valid_json: function() {
+      var json = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
+        chr
       ) {
         return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
       });
       return json;
     },
-    autocomplete: function () {
-      let idx = [];
-      for (let i = 0; i < this.json.data.length; i++) {
+    autocomplete: function() {
+      var idx = [];
+      for (var i = 0; i < this.json.data.length; i++) {
         idx.push(this.json.data[i].title);
       }
       return idx;
     },
-    items: function () {
-      let paragraph_container = this.json.data[this.data_number - 1].paragraphs[
-      this.context_number - 1
-          ];
-      let items = [];
+    buttonCss: function() {
+      return this.withAnswer== "false"? 'danger' : 'success'
+    },
+    items: function() {
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
+      let color = "";
+      var items = [];
       for (var i = 0; i < paragraph_container.qas.length; i++) {
-        let item = {
-          Questions: paragraph_container.qas[i].question,
-          Answers: paragraph_container.qas[i].answers[0].text
+        if(paragraph_container.qas[i].answers[0].withAnswer== true || paragraph_container.qas[i].answers[0].withAnswer== "true")
+            color = "success";
+        else
+             color = "danger";
+        var item = {
+          // fields: ["שאלות", "תשובות", "עריכה" , "יש-תשובה"]
+          שאלות: paragraph_container.qas[i].question,
+          תשובות: paragraph_container.qas[i].answers[0].text,
+          'יש תשובה בטקסט': paragraph_container.qas[i].answers[0].withAnswer,
+          _rowVariant: color
         };
         items.push(item);
       }
       return items;
     },
-    paragraph_context: function () {
+    paragraph_context: function() {
       return this.json.data[this.data_number - 1].paragraphs[
-      this.context_number - 1
-          ].context;
+        this.context_number - 1
+      ].context;
     },
-    answer_start: function () {
-      return this.paragraph_context.indexOf(this.selectedAnswer);
+    toIgnore:function(){
+      let ignoreit = [];
+      firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+           let extractfilename = doc.data();
+           extractfilename = doc.data().filename.substring(15, 21);
+           ignoreit.push(extractfilename);
+         })
+      });
+      // eslint-disable-next-line no-console
+      console.log(ignoreit)
+      return ignoreit;
+    },
+    answer_start: function() {
+      return this.paragraph_context.indexOf(this.answer);
     },
     options() {
       return {
@@ -361,9 +399,9 @@ export default {
         circleLineCap: "round",
         varyStrokeArray: [1, 2],
         pathColors: ["lightgrey", "rgb(40, 167, 69)"],
-        text: function (value) {
+        text: function(value) {
           return (
-              this.htmlifyNumber(value) + '<span style="font-size: 1em;">%</span>'
+            this.htmlifyNumber(value) + '<span style="font-size: 1em;">%</span>'
           );
         },
         textColor: "black"
@@ -372,7 +410,13 @@ export default {
   }
 };
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+  #one{
+     background-color: #689f38;
+    border-color: #689f38;
+  }
 </style>
+
+
