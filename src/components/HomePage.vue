@@ -22,6 +22,8 @@
   <br>
   <b><u>התשובה</u></b> היא <b>מילה או מחרוזת מילים מתוך הפסקה</b>, ואותה תסמנו על גבי הפסקה באמצעות העכבר.
   <br>
+  לכל שאלה בעלת מענה יש לסמן את התשובה הנכונה, אך <b>גם לכל שאלה חסרת מענה יש לסמן תשובה מוגדרת</b> - מעין מסיח שנראה כמו תשובה מתקבלת על הדעת, אך אינו תשובה נכונה.
+  <br>
   משך המשימה הוא <b><u>שעה וחצי</u></b>
   <br>
   <h5 align = "right">
@@ -94,7 +96,7 @@ export default {
       prolificID: this.getParameterByName("PROLIFIC_PID"),
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
-      min:21,
+      min:400,
       max:1389,
 
     };

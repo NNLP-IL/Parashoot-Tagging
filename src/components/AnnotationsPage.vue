@@ -188,7 +188,7 @@ export default {
       questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
       answerPH:"סמנו תשובה מתוך הפסקה",
       borderColor:"#dbfcd7",
-      min:21,
+      min:400,
       max:1389,
     };
   },
