@@ -154,10 +154,18 @@ export default {
       }
     },
     getOpenNumber: function(){
-      let num;
+      let array = this.alreadyAnnotatedFiles;
+      let num , str;
+      let rand =0; 
       do{
         num =  this.getRandomInt(this.min, this.max).toString();
-      }while(!this.alreadyAnnotatedFiles.includes(this.pad(num, 6)));
+        rand = rand +1;
+        str =this.pad(num, 6).toString();
+        // eslint-disable-next-line no-console
+        console.log(array.indexOf(str));
+      }while(array.indexOf(str)== -1  && rand < 10000);
+      // eslint-disable-next-line no-console
+      console.log(rand);
       return num;
     },
     getParameterByName: function (name) {
