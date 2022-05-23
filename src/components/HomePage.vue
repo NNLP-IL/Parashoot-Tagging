@@ -14,7 +14,7 @@
 אם אינכם מצליחים לנסח 5 שאלות, אפשר לנסח 4 שאלות, או 3 (מינימום), אבל השתדלו לנסח 5.
   </li>
 
-  <li>2 שאלות <b>רלוונטיות</b> לפסקה, אך אין להן תשובה בפסקה (במקום לסמן תשובה נכונה יש לסמן מסיח שאינו התשובה הנכונה)
+  <li>2 שאלות <b>רלוונטיות</b> לפסקה, אך אין להן תשובה בפסקה (במקום לסמן תשובה נכונה יש לסמן מסיח שאינו התשובה הנכונה).<br>
      אם אינכם מצליחים לנסח 2 שאלות, נסחו לפחות שאלה אחת.
   </li>
   <br>
@@ -95,7 +95,7 @@ export default {
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
       min:21,
-      max:1389,
+      max:398,
 
     };
   },
@@ -157,7 +157,7 @@ export default {
       let num;
       do{
         num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.toIgnore.includes(this.pad(num, 6)));
+      }while(!this.alreadyAnnotatedFiles.includes(this.pad(num, 6)));
       return num;
     },
     getParameterByName: function (name) {
@@ -177,18 +177,20 @@ export default {
     
   },
   computed: {
-    toIgnore:function(){
-      let ignoreit = [];
+    alreadyAnnotatedFiles:function(){
+      const oldStudy = "6272354bb7e245aa188c9847"
+      let alreadyAnnotated = [];
       firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
          querySnapshot.forEach((doc) => {
-           let extractfilename = doc.data();
-           extractfilename = doc.data().filename.substring(15, 21);
-           ignoreit.push(extractfilename);
+            let extractfilename = doc.data();
+            extractfilename = doc.data().filename.substring(15, 21);
+            if(!alreadyAnnotated.includes(extractfilename) && doc.data().studyID == oldStudy)//Make sure its a file from the study
+              alreadyAnnotated.push(extractfilename);
          })
       });
       // eslint-disable-next-line no-console
-      console.log(ignoreit)
-      return ignoreit;
+      console.log(alreadyAnnotated)
+      return alreadyAnnotated;
     },
   },
   components: {

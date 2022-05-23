@@ -291,7 +291,7 @@ export default {
       let num;
       do{
         num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.toIgnore.includes(this.pad(num, 6)));
+      }while(!this.toIgnore.includes(this.pad(num, 6)));
       return num;
     },
     getRandomInt: function (min, max) {
@@ -381,9 +381,10 @@ export default {
       let ignoreit = [];
       firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
          querySnapshot.forEach((doc) => {
-           let extractfilename = doc.data();
-           extractfilename = doc.data().filename.substring(15, 21);
-           ignoreit.push(extractfilename);
+            let extractfilename = doc.data();
+            extractfilename = doc.data().filename.substring(15, 21);
+            if(!ignoreit.includes(extractfilename))
+              ignoreit.push(extractfilename);
          })
       });
       // eslint-disable-next-line no-console
