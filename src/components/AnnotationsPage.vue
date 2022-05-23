@@ -383,7 +383,8 @@ export default {
          querySnapshot.forEach((doc) => {
            let extractfilename = doc.data();
            extractfilename = doc.data().filename.substring(15, 21);
-           ignoreit.push(extractfilename);
+           if(!ignoreit.includes(extractfilename))
+              ignoreit.push(extractfilename);
          })
       });
       // eslint-disable-next-line no-console
