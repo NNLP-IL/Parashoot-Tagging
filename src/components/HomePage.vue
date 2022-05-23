@@ -157,7 +157,7 @@ export default {
       let num;
       do{
         num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.toIgnore.includes(this.pad(num, 6)));
+      }while(this.alreadyAnnotatedFiles.includes(this.pad(num, 6)));
       return num;
     },
     getParameterByName: function (name) {
@@ -177,19 +177,19 @@ export default {
     
   },
   computed: {
-    toIgnore:function(){
-      let ignoreit = [];
+    alreadyAnnotatedFiles:function(){
+      let alreadyAnnotated = [];
       firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
          querySnapshot.forEach((doc) => {
            let extractfilename = doc.data();
            extractfilename = doc.data().filename.substring(15, 21);
-           if(!ignoreit.includes(extractfilename))
-              ignoreit.push(extractfilename);
+           if(!alreadyAnnotated.includes(extractfilename))
+              alreadyAnnotated.push(extractfilename);
          })
       });
       // eslint-disable-next-line no-console
-      console.log(ignoreit)
-      return ignoreit;
+      console.log(alreadyAnnotated)
+      return alreadyAnnotated;
     },
   },
   components: {
