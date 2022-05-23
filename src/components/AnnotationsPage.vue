@@ -123,7 +123,7 @@
       <b-button
           :size="''"
           :variant="'primary'"
-          href="https://app.prolific.co/submissions/complete?cc=72552206"
+          href="https://app.prolific.co/submissions/complete?cc=49582377"
       >בחזרה לפרוליפיק
       </b-button>
       <br>
@@ -187,7 +187,9 @@ export default {
       withAnswer:true,
       questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
       answerPH:"סמנו תשובה מתוך הפסקה",
-      borderColor:"#dbfcd7"      
+      borderColor:"#dbfcd7",
+      min:21,
+      max:1389,
     };
   },
   methods: {
@@ -268,7 +270,7 @@ export default {
         'prolificID': this.json.prolificID,
         'studyID':this.json.studyID,
         'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 6) + "_" + "Tagged" + ".json",
-        'timeStamp': d.toString()
+        'timeStamp': d.toString(),
       }
       let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 6)+"_"+JSClock();
       db.collection("annotations").doc(docName).set(tosend);
@@ -278,12 +280,19 @@ export default {
       let pro = this.json.prolificID;
       let studID = this.json.studyID;
       this.saveJSON("continue");
-      this.jsonID = this.getRandomInt(21, 399).toString();
+      this.jsonID = this.getOpenNumber().toString();
       this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
       this.json.jsonID = this.jsonID;
       this.json.prolificID = pro;
       this.json.studyID = studID;
       this.data_number = 1;
+    },
+    getOpenNumber: function(){
+      let num;
+      do{
+        num =  this.getRandomInt(this.min, this.max).toString();
+      }while(this.toIgnore.includes(this.pad(num, 6)));
+      return num;
     },
     getRandomInt: function (min, max) {
       min = Math.ceil(min);
@@ -367,6 +376,19 @@ export default {
       return this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ].context;
+    },
+    toIgnore:function(){
+      let ignoreit = [];
+      firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+           let extractfilename = doc.data();
+           extractfilename = doc.data().filename.substring(15, 21);
+           ignoreit.push(extractfilename);
+         })
+      });
+      // eslint-disable-next-line no-console
+      console.log(ignoreit)
+      return ignoreit;
     },
     answer_start: function() {
       return this.paragraph_context.indexOf(this.answer);

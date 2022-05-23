@@ -25,7 +25,7 @@
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/16P7Rj9PeZRs68lpP9wYMvV5cAjNOcors/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1oxE7JOVDjV9FnRgtgFUOV61e86Fsrp2Z/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
@@ -57,7 +57,7 @@
 
 <script>
 import AnnotationsPage from "./AnnotationsPage.vue";
-
+import firebase from '../firebase'
 export default {
   name: "HomePage",
   data: function() {
@@ -93,6 +93,9 @@ export default {
       prolificID: this.getParameterByName("PROLIFIC_PID"),
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
+      min:21,
+      max:1389,
+
     };
   },
   methods: {
@@ -141,13 +144,20 @@ export default {
     getRandomFile: async function () {// When pressing the button!!!
       if(this.checkID() == true)
       {
-        this.jsonID = this.getRandomInt(21, 399).toString();
+        this.jsonID = this.getOpenNumber().toString();
         this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
         this.json.jsonID = this.jsonID;
         this.json.prolificID = this.prolificID;
         this.json.studyID = this.studyID;
         this.fileUploaded = true;
       }
+    },
+    getOpenNumber: function(){
+      let num;
+      do{
+        num =  this.getRandomInt(this.min, this.max).toString();
+      }while(this.toIgnore.includes(this.pad(num, 6)));
+      return num;
     },
     getParameterByName: function (name) {
       let queryDict = {};
@@ -164,6 +174,21 @@ export default {
       return intID > 0 && intID < 1200;
     }
     
+  },
+  computed: {
+    toIgnore:function(){
+      let ignoreit = [];
+      firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+           let extractfilename = doc.data();
+           extractfilename = doc.data().filename.substring(15, 21);
+           ignoreit.push(extractfilename);
+         })
+      });
+      // eslint-disable-next-line no-console
+      console.log(ignoreit)
+      return ignoreit;
+    },
   },
   components: {
     AnnotationsPage
