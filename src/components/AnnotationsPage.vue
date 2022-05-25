@@ -38,7 +38,7 @@
     </div>       
     <br>
     <div v-if="this.toEnd == false">
-      <h2>פסקה מספר {{ this.pad(this.json.jsonID, 6)}}</h2>
+      <h2>פסקה מספר {{ dataService.pad(this.json.jsonID, 6)}}</h2>
       <!-- <span
         class="text-muted" dir="rtl" 
       >פסקה {{ context_number }} מתוך {{ json.data[data_number - 1].paragraphs.length }} | מסמך {{ data_number }} מתוך {{ json.data.length }}</span> -->
@@ -123,7 +123,7 @@
       <b-button
           :size="''"
           :variant="'primary'"
-          href="https://app.prolific.co/submissions/complete?cc=49582377"
+          href="https://app.prolific.co/submissions/complete?cc=939DB2A4"
       >בחזרה לפרוליפיק
       </b-button>
       <br>
@@ -139,7 +139,8 @@
 </template>
 
 <script>
-import firebase from '../firebase'
+import firebase from '../services/firebase'
+import { dataService } from "../services/data"
 
 const db = firebase.firestore()
 const annotations = db.collection('annotations')
@@ -188,8 +189,8 @@ export default {
       questionPH:"הקלידו שאלה שיש לה מענה בפסקה...",
       answerPH:"סמנו תשובה מתוך הפסקה",
       borderColor:"#dbfcd7",
-      min:400,
-      max:1389,
+      dataService,
+      testProlificID: "Roi"
     };
   },
   methods: {
@@ -230,16 +231,18 @@ export default {
       }
     },
     endStamp:function(){
-      if(this.prolificID != 'Roi')
-        {
-          let data = {
-            ended:d.toString(),
-            prolificID: this.json.prolificID,
-            studyID: this.json.studyID
-          }
-          let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
-          db.collection("ends").doc(docName).set(data);
-        }
+      const data = {
+        ended:d.toString(),
+        prolificID: this.json.prolificID,
+        studyID: this.json.studyID
+      }
+      const docName = `${this.json.prolificID}_${this.json.studyID}_${JSClock()}`;
+      if (this.json.prolificID === this.testProlificID) {
+        // eslint-disable-next-line
+        console.log("testing endStamp", { docName, data }); 
+      } else {
+        db.collection("ends").doc(docName).set(data);
+      }
     },
     checkAnswers: function(){
       // eslint-disable-next-line no-console
@@ -269,41 +272,29 @@ export default {
         'json_data': json1,
         'prolificID': this.json.prolificID,
         'studyID':this.json.studyID,
-        'filename': "heb_squad-v1.1_" + this.pad(this.json.jsonID, 6) + "_" + "Tagged" + ".json",
+        'filename': `heb_squad-v1.1_${dataService.pad(this.json.jsonID, 6)}_Tagged.json`,
         'timeStamp': d.toString(),
       }
-      let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +this.pad(this.json.jsonID, 6)+"_"+JSClock();
-      db.collection("annotations").doc(docName).set(tosend);
-      // await addAnnotationToDB(tosend);
+      let docName = `${this.json.prolificID}_${this.json.studyID}_${dataService.pad(this.json.jsonID, 6)}_${JSClock()}`;
+      if (this.json.prolificID === this.testProlificID) {
+        // eslint-disable-next-line
+        console.log("testing saveJSON", { docName, doc: tosend }); 
+      } else {
+        db.collection("annotations").doc(docName).set(tosend);
+        // await addAnnotationToDB(tosend);
+      }
     },
     getAnotherFile: async function () {
       let pro = this.json.prolificID;
       let studID = this.json.studyID;
       this.saveJSON("continue");
-      this.jsonID = this.getOpenNumber().toString();
-      this.json = require("../../src/json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
+      this.jsonID = dataService.getNextId(true);
+      const paddedID = dataService.pad(this.jsonID, 6);
+      this.json = require(`../json_resources/heb_squad-v1.1_${paddedID}.json`);
       this.json.jsonID = this.jsonID;
       this.json.prolificID = pro;
       this.json.studyID = studID;
       this.data_number = 1;
-    },
-    getOpenNumber: function(){
-      let num;
-      let rand =0;
-      do{
-        rand = rand +1;
-        num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.alreadyAnnotatedFiles.includes(this.pad(num, 6)) && rand < 100);
-      return num;
-    },
-    getRandomInt: function (min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    pad: function (num, size) {
-      while (num.length < size) num = "0" + num;
-      return num;
     },
     managePlaceHolders: function(){
 
@@ -322,16 +313,18 @@ export default {
     }
   },
   beforeMount(){
-    if(this.json.prolificID != 'Roi')
-        {
-          let data = {
-            started:d.toString(),
-            prolificID: this.json.prolificID,
-            studyID: this.json.studyID
-          }
-            let docName = this.json.prolificID + "_"+ this.json.studyID+"_" +JSClock();
-            db.collection("enters").doc(docName).set(data)
-        }
+    const data = {
+      started:d.toString(),
+      prolificID: this.json.prolificID,
+      studyID: this.json.studyID
+    }
+    const docName = `${this.json.prolificID}_${this.json.studyID}_${JSClock()}`;
+    if (this.json.prolificID === this.testProlificID) {
+      // eslint-disable-next-line
+      console.log("testing beforeMount", { docName, data }); 
+    } else {
+      db.collection("enters").doc(docName).set(data)
+    }
  },
   computed: {
     valid_json: function() {
@@ -378,20 +371,6 @@ export default {
       return this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ].context;
-    },
-    alreadyAnnotatedFiles:function(){
-      let alreadyAnnotated = [];
-      firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
-         querySnapshot.forEach((doc) => {
-           let extractfilename = doc.data();
-           extractfilename = doc.data().filename.substring(15, 21);
-           if(!alreadyAnnotated.includes(extractfilename))
-              alreadyAnnotated.push(extractfilename);
-         })
-      });
-      // eslint-disable-next-line no-console
-      console.log(alreadyAnnotated)
-      return alreadyAnnotated;
     },
     answer_start: function() {
       return this.paragraph_context.indexOf(this.answer);

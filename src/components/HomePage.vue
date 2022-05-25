@@ -28,7 +28,7 @@
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/1oxE7JOVDjV9FnRgtgFUOV61e86Fsrp2Z/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
+  <b><a href="https://drive.google.com/file/d/16P7Rj9PeZRs68lpP9wYMvV5cAjNOcors/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
@@ -60,7 +60,21 @@
 
 <script>
 import AnnotationsPage from "./AnnotationsPage.vue";
-import firebase from '../firebase'
+import { dataService } from "../services/data";
+const study = "b1";
+const studyDef = require(`../studies/${study}.json`);
+// eslint-disable-next-line
+console.log(`Using study: ${study}, def:`, studyDef); 
+if (studyDef.type === "limits") {
+  dataService.initializeByLimits(studyDef.min, studyDef.max);
+} else if (studyDef.type === "ids") {
+  dataService.initializeByIds(studyDef.ids);
+} else {
+  // eslint-disable-next-line
+  console.warn(`Invalid study def type: "${studyDef.type}", using default limits`);
+  dataService.initializeByLimits();
+}
+
 export default {
   name: "HomePage",
   data: function() {
@@ -96,17 +110,9 @@ export default {
       prolificID: this.getParameterByName("PROLIFIC_PID"),
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
-      min:400,
-      max:1389,
-
     };
   },
   methods: {
-    readFile: function (jsonID) {
-      this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(jsonID, 6) + ".json");
-      this.json.jsonID = jsonID;
-      this.fileUploaded = true;
-    },
     readFileFromUpload: function() {
       var reader = new FileReader();
       reader.onload = function(event) {
@@ -115,15 +121,6 @@ export default {
         
       }.bind(this);
       reader.readAsText(this.file);
-    },
-    pad: function (num, size) {
-      while (num.length < size) num = "0" + num;
-      return num;
-    },
-    getRandomInt: function (min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     guideClicked: function () {
       this.guide = "pass"
@@ -135,7 +132,7 @@ export default {
         this.errors = "שדה חובה";
         return false;
       }
-      else if(this.guide != "pass"){
+      else if(this.guide !== "pass" && this.prolificID !== "Roi"){
           this.errors = "חובה לקרוא את ההנחיות לפני שמתחילים";
         return false
       }
@@ -145,24 +142,16 @@ export default {
       }
     },
     getRandomFile: async function () {// When pressing the button!!!
-      if(this.checkID() == true)
-      {
-        this.jsonID = this.getOpenNumber().toString();
-        this.json = require("../json_resources/heb_squad-v1.1_" + this.pad(this.jsonID, 6) + ".json");
-        this.json.jsonID = this.jsonID;
-        this.json.prolificID = this.prolificID;
-        this.json.studyID = this.studyID;
-        this.fileUploaded = true;
+      if (!this.checkID()) {
+        return;
       }
-    },
-    getOpenNumber: function(){
-      let num;
-      let rand =0;
-      do{
-        rand = rand +1;
-        num =  this.getRandomInt(this.min, this.max).toString();
-      }while(this.alreadyAnnotatedFiles.includes(this.pad(num, 6)) && rand < 100);
-      return num;
+      this.jsonID = dataService.getNextId();
+      const paddedID = dataService.pad(this.jsonID, 6);
+      this.json = require(`../json_resources/heb_squad-v1.1_${paddedID}.json`);
+      this.json.jsonID = this.jsonID;
+      this.json.prolificID = this.prolificID;
+      this.json.studyID = this.studyID;
+      this.fileUploaded = true;
     },
     getParameterByName: function (name) {
       let queryDict = {};
@@ -179,22 +168,6 @@ export default {
       return intID > 0 && intID < 1200;
     }
     
-  },
-  computed: {
-    alreadyAnnotatedFiles:function(){
-      let alreadyAnnotated = [];
-      firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
-         querySnapshot.forEach((doc) => {
-           let extractfilename = doc.data();
-           extractfilename = doc.data().filename.substring(15, 21);
-           if(!alreadyAnnotated.includes(extractfilename))
-              alreadyAnnotated.push(extractfilename);
-         })
-      });
-      // eslint-disable-next-line no-console
-      console.log(alreadyAnnotated)
-      return alreadyAnnotated;
-    },
   },
   components: {
     AnnotationsPage
