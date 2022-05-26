@@ -123,7 +123,7 @@
       <b-button
           :size="''"
           :variant="'primary'"
-          href="https://app.prolific.co/submissions/complete?cc=939DB2A4"
+          :href="prolificCompleteUrl"
       >בחזרה לפרוליפיק
       </b-button>
       <br>
@@ -172,7 +172,7 @@ const uuidv4 = require('uuid/v4');
 
 export default {
   name: "AnnotationsPage",
-  props: ["json" ],
+  props: [ "json", "prolificSubmissionId" ],
   data: function() {
     return {
       data_number: 1,
@@ -388,6 +388,9 @@ export default {
         },
         textColor: "black"
       };
+    },
+    prolificCompleteUrl() {
+      return `https://app.prolific.co/submissions/complete?cc=${this.prolificSubmissionId}`;
     }
   }
 };

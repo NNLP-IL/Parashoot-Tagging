@@ -1,7 +1,7 @@
 <template>
   <div class="HomePage container mt-3 mb-3"  dir = "rtl" align = "right">
     <div v-if="fileUploaded">
-      <AnnotationsPage v-bind:json="json"/>
+      <AnnotationsPage v-bind:json="json" v-bind:prolificSubmissionId="prolificSubmissionId"/>
     </div>
     <div v-else>
       <h1>כתיבת שאלות על פסקאות מוויקיפדיה</h1>
@@ -61,7 +61,7 @@
 <script>
 import AnnotationsPage from "./AnnotationsPage.vue";
 import { dataService } from "../services/data";
-const study = "b1";
+const study = "c1";
 const studyDef = require(`../studies/${study}.json`);
 // eslint-disable-next-line
 console.log(`Using study: ${study}, def:`, studyDef); 
@@ -110,6 +110,7 @@ export default {
       prolificID: this.getParameterByName("PROLIFIC_PID"),
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
+      prolificSubmissionId: studyDef.prolificSubmissionId,
     };
   },
   methods: {
