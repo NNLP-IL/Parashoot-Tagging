@@ -70,6 +70,9 @@
 
       <b-table striped hover :items="items" :fields="fields" >
         <template slot="עריכה" slot-scope="row">
+          <b-button :size="''" :variant="'warning'" @click.stop="editAnnotation(row.index)">Edit</b-button>
+        </template>
+        <template slot="מחיקה" slot-scope="row">
           <b-button :size="''" :variant="'danger'" @click.stop="deleteAnnotation(row.index)">Delete</b-button>
         </template>
       </b-table>
@@ -179,7 +182,7 @@ export default {
       context_number: 1,
       question: "",
       answer: "",
-      fields: ["שאלות", "תשובות", "עריכה" , "יש תשובה בטקסט"],
+      fields: ["שאלות", "תשובות","מחיקה" ,"עריכה" , "יש תשובה בטקסט"],
       query: "",
       message: "",
       errors: "",
@@ -215,6 +218,18 @@ export default {
       ];
       paragraph_container.qas.splice(row_index, 1);
     },
+    editAnnotation: function(row_index){
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
+      // eslint-disable-next-line no-console
+      // console.log(paragraph_container.qas[row_index])
+      // eslint-disable-next-line no-console
+      // console.log(row_index)
+      this.question = paragraph_container.qas[row_index].question;
+      this.answer = paragraph_container.qas[row_index].answers[0].text;
+      paragraph_container.qas.splice(row_index, 1);
+    },
     getSelection: function(fixStr) {
       this.answer = fixStr;
       this.textSelected = true;
@@ -247,7 +262,7 @@ export default {
     checkAnswers: function(){
       // eslint-disable-next-line no-console
       // console.log(this)
-      if(this.question == "" || this.answer ==""){
+      if(this.question == "" || this.answer =="" || this.answer_start == -1){
         this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
         return false;
       }
@@ -295,7 +310,9 @@ export default {
       this.json.prolificID = pro;
       this.json.studyID = studID;
       this.data_number = 1;
-    },
+      this.answer = "";
+      this.question = "";
+      },
     managePlaceHolders: function(){
 
       this.questionPH = this.withAnswer == "true" ? "הקלידו שאלה שיש לה מענה בפסקה...": "הקלידו שאלה שאין לה מענה בפסקה...";//הקלידו שאלה ש<b>אין</b> לה מענה בפסקה...
