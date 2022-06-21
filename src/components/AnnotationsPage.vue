@@ -262,9 +262,11 @@ export default {
     checkAnswers: function(){
       // eslint-disable-next-line no-console
       // console.log(this)
-      if(this.question == "" || this.answer =="" || this.answer_start == -1){
+      if(this.question == "" || this.answer =="" ){
         this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
         return false;
+      }else if(this.answer_start == -1){
+          this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקהאין להקליד בשדה התשובה - יש לסמן את התשובה מתוך הפסקה";
       }
       else{
           this.errors = "";
