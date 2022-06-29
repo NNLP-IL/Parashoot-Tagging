@@ -262,11 +262,16 @@ export default {
     checkAnswers: function(){
       // eslint-disable-next-line no-console
       // console.log(this)
-      if(this.question == "" || this.answer =="" ){
-        this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקה";
-        return false;
+      if(this.question == "" ||  this.questionPH == this.question){
+        this.errors = "יש להקליד שאלה";
+        return false;  
       }else if(this.answer_start == -1){
-          this.errors = "נא להכניס שאלה על הפסקה ותשובה לשאלה זו מתוך הפסקהאין להקליד בשדה התשובה - יש לסמן את התשובה מתוך הפסקה";
+          this.errors = "אין להקליד בשדה זה, יש לסמן תשובה מתוך הפסקה";
+          return false;
+      }
+      else if(this.answer == "" ||  this.answerPH == this.answer){
+          this.errors = "שדה תשובה ריק, יש לסמן תשובה מתוך הפסקה";
+          return false;
       }
       else{
           this.errors = "";
