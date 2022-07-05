@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const settings = { timestampsInSnapshots: true };
 const config = {
@@ -14,5 +15,6 @@ const config = {
 
 firebase.initializeApp(config);
 firebase.firestore().settings(settings);
+firebase.auth().signInAnonymously();
 
 export default firebase;
