@@ -6,8 +6,9 @@
     <div v-else>
       <h1>כתיבת שאלות על פסקאות מוויקיפדיה</h1>
       <hr>
+  <p style="border:3px; border-style:solid; border-color:#FF0000; padding: 1em;">המשימה הזו היא הראשונה בסדרה של משימות רבות. אם עבודתך תהיה טובה ותענה על הנדרש בהנחיות, תקבל/י הזמנה במשימות הבאות.</p>
   <p>
-  במשימה זו תקבלו פסקאות אקראיות שנלקחו מערכים בוויקיפדיה. לכל פסקה תתבקשו לנסח שני סוגים של שאלות הבנת הנקרא:
+  במשימה זו תקבלו 3 פסקאות אקראיות שנלקחו מערכים בוויקיפדיה. לכל פסקה תתבקשו לנסח שני סוגים של שאלות הבנת הנקרא:
   <br>
   <li>
   5 שאלות שיש להן תשובה בפסקה.
@@ -24,16 +25,17 @@
   <br>
   לכל שאלה בעלת מענה יש לסמן את התשובה הנכונה, אך <b>גם לכל שאלה חסרת מענה יש לסמן תשובה מוגדרת</b> - מעין מסיח שנראה כמו תשובה מתקבלת על הדעת, אך אינו תשובה נכונה.
   <br>
-  משך המשימה הוא <b><u>שעה וחצי</u></b>
-  <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/16P7Rj9PeZRs68lpP9wYMvV5cAjNOcors/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1dGR-FwgGvk-Fxe-DOrP0kr-92JyDqfoF/view" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
     <br>
-  קראו את ההנחיות ביסודיות, ולאחר מכן הקדישו כ-<u>9-10 דקות</u> ל-7 שאלות (פסקה אחת): <u><b>סה״כ 8 פסקאות</b></u>.
+    שימו לב! הן השאלות שתנסחו והן התשובות שתסמנו צריכות לעמוד בסטנדרטים מסוימים. <b>מבלי לקרוא את ההנחיות לא ניתן לבצע את המשימה.</b>
+    <br>
+    הזמן המוערך לביצוע המשימה הוא עד כ-<b><u>42 דקות:</u></b> <u> את 10-12 הדקות הראשונות יש להקדיש לקריאת ההנחיות, ולאחר מכן כ-9-10 דקות לכל פסקה. 
+</u>
       <!-- <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer> -->
       <!-- <br>
       <div class="uploadBar" align = "left">
@@ -61,7 +63,7 @@
 <script>
 import AnnotationsPage from "./AnnotationsPage.vue";
 import { dataService } from "../services/data";
-const study = "c1";
+const study = "d";
 const studyDef = require(`../studies/${study}.json`);
 // eslint-disable-next-line
 console.log(`Using study: ${study}, def:`, studyDef); 

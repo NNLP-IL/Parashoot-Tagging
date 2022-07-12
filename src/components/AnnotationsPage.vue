@@ -3,37 +3,8 @@
     <div>
       <b-navbar sticky toggleable="lg" class="pl-0">
         <b-navbar-brand>cdQA-annotator - Welcome User Number {{this.json.prolificID}}</b-navbar-brand>
-<!-- 
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-        <b-collapse id="nav-collapse" is-nav> -->
-          <!-- Right aligned nav items -->
-          <!-- <b-navbar-nav class="ml-auto">
-            <b-nav-item>
-              <svg-progress-bar :value="data_number / json.data.length * 100" :options="options"></svg-progress-bar>
-            </b-nav-item> -->
             <b-nav-form>
-              <!-- <vue-bootstrap-typeahead
-                size="sm"
-                v-model="query"
-                :data="autocomplete"
-                placeholder="Search a document..."
-                @hit="data_number = autocomplete.indexOf($event) + 1; context_number = 1"
-              /> -->
             </b-nav-form>
-              <!-- <p>Message is: {{ message }}</p> -->
-            <!-- <b-nav-item right>
-              <b-button
-                :size="'sm'"
-                :variant="'primary'"
-                v-on:click="delete_empty_document()"
-                v-download-data="valid_json"
-                v-download-data:type="'json'"
-                v-download-data:filename="getName()"
-              >Download</b-button>
-            </b-nav-item>
-          </b-navbar-nav> -->
-        <!-- </b-collapse> -->
       </b-navbar>
     </div>       
     <br>
@@ -77,22 +48,10 @@
         </template>
       </b-table>
       <br>
-      <div v-if="data_number > 1 && context_number == 1">
-        <b-button
-          :size="''"
-          :variant="'outline-primary'"
-          v-on:click="saveJSON('end')"
-        >סיימתי</b-button>
-         או 
+      <div v-if="paragraph_number == 1 && context_number == 1">
         <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
-      <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
-        <b-button
-          :size="''"
-          :variant="'outline-primary'"
-          v-on:click="saveJSON('end')"
-        >סיימתי</b-button>
-         או 
+      <div v-else-if="paragraph_number == 2">
         <b-button :size="''" :variant="'outline-primary'" v-on:click="getAnotherFile()">לפסקה הבאה</b-button>
       </div>
       <div v-else>
@@ -101,12 +60,6 @@
           :variant="'outline-primary'"
           v-on:click="saveJSON('end')"
         >סיימתי</b-button> 
-        או 
-        <b-button
-          :size="''"
-          :variant="'outline-primary'"
-          v-on:click="getAnotherFile()"
-        >לפסקה הבאה</b-button>
       </div>
       <br>
       <br>
@@ -193,7 +146,8 @@ export default {
       answerPH:"סמנו תשובה מתוך הפסקה",
       borderColor:"#dbfcd7",
       dataService,
-      testProlificID: "Roi"
+      testProlificID: "Roi",
+      paragraph_number: 1
     };
   },
   methods: {
@@ -319,6 +273,7 @@ export default {
       this.data_number = 1;
       this.answer = "";
       this.question = "";
+      this.paragraph_number = this.paragraph_number + 1;
       },
     managePlaceHolders: function(){
 
