@@ -22,18 +22,24 @@
   <br>
   <b><u>התשובה</u></b> היא <b>מילה או מחרוזת מילים מתוך הפסקה</b>, ואותה תסמנו על גבי הפסקה באמצעות העכבר.
   <br>
-  לכל שאלה בעלת מענה יש לסמן את התשובה הנכונה, אך <b>גם לכל שאלה חסרת מענה יש לסמן תשובה מוגדרת</b> - מעין מסיח שנראה כמו תשובה מתקבלת על הדעת, אך אינו תשובה נכונה.
+  לכל שאלה בעלת מענה יש לסמן את התשובה הנכונה, אך <u><b>גם לכל שאלה חסרת מענה יש לסמן תשובה מוגדרת</b></u> - מעין מסיח שנראה כמו תשובה מתקבלת על הדעת, אך אינו תשובה נכונה.
   <br>
-  משך המשימה הוא <b><u>שעה וחצי</u></b>
+  משך המשימה הוא <b><u>.שעה</u></b>
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/16P7Rj9PeZRs68lpP9wYMvV5cAjNOcors/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1iJQBbhOP0YhUi3G9JDf82Sy9bflaHDLd/view" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
     <br>
-  קראו את ההנחיות ביסודיות, ולאחר מכן הקדישו כ-<u>9-10 דקות</u> ל-7 שאלות (פסקה אחת): <u><b>סה״כ 8 פסקאות</b></u>.
+    שימו לב! טווח התשובה שתסמנו צריך לעמוד בסטנדרטים מסוימים.
+    <br>
+     <b>מבלי לקרוא את ההנחיות לא ניתן לבצע את המשימה.</b> 
+    <br>
+     שאלות ותשובות שאינן עומדות בקריטריונים בסיסיים הן פסולות.
+    <br>
+  עבור כל פסקה הקדישו כ-9-10 דקות לנסח כ-7 שאלות (סה״כ: כ-42 שאלות לאורך המשימה).
       <!-- <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer> -->
       <!-- <br>
       <div class="uploadBar" align = "left">
@@ -61,7 +67,8 @@
 <script>
 import AnnotationsPage from "./AnnotationsPage.vue";
 import { dataService } from "../services/data";
-const study = "c1";
+import firebase from '../services/firebase'
+const study = "f";
 const studyDef = require(`../studies/${study}.json`);
 // eslint-disable-next-line
 console.log(`Using study: ${study}, def:`, studyDef); 
@@ -111,8 +118,17 @@ export default {
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
       prolificSubmissionId: studyDef.prolificSubmissionId,
+      avoid:[]
     };
   },
+    beforeMount(){
+    firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
+      this.avoid = [];
+      querySnapshot.forEach((doc) => {
+        this.avoid.push(doc.data().filename.substring(15,21));
+      });
+    });
+ },
   methods: {
     readFileFromUpload: function() {
       var reader = new FileReader();
@@ -147,7 +163,7 @@ export default {
         return;
       }
       this.jsonID = dataService.getNextId();
-      const paddedID = dataService.pad(this.jsonID, 6);
+      const paddedID = this.checkFile(dataService.pad(this.jsonID, 6));
       this.json = require(`../json_resources/heb_squad-v1.1_${paddedID}.json`);
       this.json.jsonID = this.jsonID;
       this.json.prolificID = this.prolificID;
@@ -167,6 +183,21 @@ export default {
     state: function (jsonID) {
       var intID = parseInt(jsonID)
       return intID > 0 && intID < 1200;
+    },
+    checkFile: function (paddedID) {
+      // eslint-disable-next-line no-console
+      // console.log(paddedID)
+      // eslint-disable-next-line no-console
+      // console.log(this.avoid)
+      let i = 0;
+      if(this.avoid.includes(paddedID) && i<10)
+      {
+        paddedID =  dataService.pad(dataService.getNextId() , 6);
+        i++;
+        // eslint-disable-next-line no-console
+        // console.log(this.avoid)
+      }
+      return paddedID
     }
     
   },

@@ -193,7 +193,8 @@ export default {
       answerPH:"סמנו תשובה מתוך הפסקה",
       borderColor:"#dbfcd7",
       dataService,
-      testProlificID: "Roi"
+      testProlificID: "Roi",
+      avoid:[]
     };
   },
   methods: {
@@ -311,7 +312,8 @@ export default {
       let studID = this.json.studyID;
       this.saveJSON("continue");
       this.jsonID = dataService.getNextId(true);
-      const paddedID = dataService.pad(this.jsonID, 6);
+
+      const paddedID = this.checkFile(dataService.pad(this.jsonID, 6));
       this.json = require(`../json_resources/heb_squad-v1.1_${paddedID}.json`);
       this.json.jsonID = this.jsonID;
       this.json.prolificID = pro;
@@ -327,13 +329,18 @@ export default {
       this.borderColor = this.withAnswer == "true" ? "#dbfcd7" :"#f7dcdc";
     },
     getName: function(){
-      // eslint-disable-next-line no-console
-      // console.log(this);
-      // this.filename 
-      // return this.json.data[0].title + " tagged";
       let tmpJsonID = this.json.jsonID;
       // delete this.json.jsonID;
       return "annotated_data_" + tmpJsonID + ".json";
+    },
+    checkFile: function (paddedID) {
+      let i = 0;
+      if(this.avoid.includes(paddedID) && i<10)
+      {
+        paddedID =  dataService.pad(dataService.getNextId() , 6);
+        i++;
+      }
+      return paddedID
     }
   },
   beforeMount(){
@@ -342,10 +349,18 @@ export default {
       prolificID: this.json.prolificID,
       studyID: this.json.studyID
     }
+    firebase.firestore().collection("annotations").onSnapshot((querySnapshot) => {
+      this.avoid = [];
+      querySnapshot.forEach((doc) => {
+        this.avoid.push(doc.data().filename.substring(15,21));
+      });
+    });
     const docName = `${this.json.prolificID}_${this.json.studyID}_${JSClock()}`;
     if (this.json.prolificID === this.testProlificID) {
       // eslint-disable-next-line
-      console.log("testing beforeMount", { docName, data }); 
+      // console.log("testing beforeMount", { docName, data });
+      // eslint-disable-next-line
+      console.log(this.avoid);  
     } else {
       db.collection("enters").doc(docName).set(data)
     }
