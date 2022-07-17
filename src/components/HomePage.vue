@@ -68,19 +68,6 @@
 import AnnotationsPage from "./AnnotationsPage.vue";
 import { dataService } from "../services/data";
 import firebase from '../services/firebase'
-const study = "f";
-const studyDef = require(`../studies/${study}.json`);
-// eslint-disable-next-line
-console.log(`Using study: ${study}, def:`, studyDef); 
-if (studyDef.type === "limits") {
-  dataService.initializeByLimits(studyDef.min, studyDef.max);
-} else if (studyDef.type === "ids") {
-  dataService.initializeByIds(studyDef.ids);
-} else {
-  // eslint-disable-next-line
-  console.warn(`Invalid study def type: "${studyDef.type}", using default limits`);
-  dataService.initializeByLimits();
-}
 
 export default {
   name: "HomePage",
@@ -117,7 +104,7 @@ export default {
       prolificID: this.getParameterByName("PROLIFIC_PID"),
       studyID : this.getParameterByName("STUDY_ID"),
       guide:null,
-      prolificSubmissionId: studyDef.prolificSubmissionId,
+      prolificSubmissionId:"",
       avoid:[]
     };
   },
@@ -128,6 +115,29 @@ export default {
         this.avoid.push(doc.data().filename.substring(15,21));
       });
     });
+
+ },
+ created() {
+    const studies= {
+      "62cac8bf5432ebac0556f401":"E1",
+      "62d408dd0c9ddd91bf5bb4bf":"E2",
+      "62d40a4269746da777bdedbd":"E3"
+    }
+    const study = (this.studyID in studies)? studies[this.studyID] : "f";
+    const studyDef = require(`../studies/${study}.json`);
+    this.prolificSubmissionId= studyDef.prolificSubmissionId;
+    // eslint-disable-next-line
+    console.log(`Using study: ${study}, def:`, studyDef); 
+    if (studyDef.type === "limits") {
+      dataService.initializeByLimits(studyDef.min, studyDef.max);
+    } else if (studyDef.type === "ids") {
+      dataService.initializeByIds(studyDef.ids);
+    } else {
+      // eslint-disable-next-line
+      console.warn(`Invalid study def type: "${studyDef.type}", using default limits`);
+      dataService.initializeByLimits();
+}
+ 
  },
   methods: {
     readFileFromUpload: function() {
