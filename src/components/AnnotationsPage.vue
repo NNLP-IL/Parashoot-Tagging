@@ -335,7 +335,7 @@ export default {
     },
     checkFile: function (paddedID) {
       let i = 0;
-      if(this.avoid.includes(paddedID) && i<10)
+      if(this.avoid.includes(paddedID) && i<15)
       {
         paddedID =  dataService.pad(dataService.getNextId() , 6);
         i++;
