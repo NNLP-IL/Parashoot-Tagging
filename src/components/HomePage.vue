@@ -161,7 +161,10 @@ export default {
       "62ef5dc72ec2bdeee749962d":"E40", 
       "62ef63c54b79826c2adf1e5d":"E41", 
       "62f0040408e2c65006daed41":"E42", 
-      "62f009e0c157f5aeaf237bbc":"E43",       
+      "62f009e0c157f5aeaf237bbc":"E43",
+      "62f366258681d6f61973350f":"E44",
+      "62f36bb2f86f7c543e15cb81":"E45",
+      "62f36df2ee1cc077cce7171e":"E46",       
     }
     const study = (this.studyID in studies)? studies[this.studyID] : "f";
     const studyDef = require(`../studies/${study}.json`);
@@ -240,7 +243,7 @@ export default {
       // eslint-disable-next-line no-console
       // console.log(this.avoid)
       let i = 0;
-      if(this.avoid.includes(paddedID) && i<15)
+      if(this.avoid.includes(paddedID) && i<100)
       {
         paddedID =  dataService.pad(dataService.getNextId() , 6);
         i++;
