@@ -169,7 +169,8 @@ export default {
       "62f6af061ddc0cb2d78a371c":"E48",
       "62f8edc0793c359cda6e311e":"E49",
       "62f8f26d524144715d176d87":"E50",
-      "62f8f45f6b228e3ec7176d8f":"E51",       
+      "62f8f45f6b228e3ec7176d8f":"E51",
+      "geektime":"geektime"       
     }
     const study = (this.studyID in studies)? studies[this.studyID] : "f";
     const studyDef = require(`../studies/${study}.json`);
