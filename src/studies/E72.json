@@ -1,1 +1,7 @@
-{"description": "E72", "prolificSubmissionId": "CEKL6PM8", "type": "limits", "min": 1390, "max": 7241}
+{
+    "description": "E72",
+    "prolificSubmissionId": "CEKL6PM8",
+    "type": "limits",
+    "min": 1390,
+    "max": 7241
+}
