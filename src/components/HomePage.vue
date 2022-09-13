@@ -24,11 +24,11 @@
   <br>
   לכל שאלה בעלת מענה יש לסמן את התשובה הנכונה, אך <u><b>גם לכל שאלה חסרת מענה יש לסמן תשובה מוגדרת</b></u> - מעין מסיח שנראה כמו תשובה מתקבלת על הדעת, אך אינו תשובה נכונה.
   <br>
-  משך המשימה הוא <b><u>שעה.</u></b>
+  משך המשימה הוא <b><u>30 דקות.</u></b>
   <br>
   <h5 align = "right">
   טרם תחילת המשימה יש לקרוא בקפידה את 
-  <b><a href="https://drive.google.com/file/d/1iJQBbhOP0YhUi3G9JDf82Sy9bflaHDLd/view" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
+  <b><a href="https://drive.google.com/file/d/1BzWWvTJY-aaOhKxpvH4ZBFNMN1Kg4T_J/view?usp=sharing" target="_blank" v-on:click="guideClicked" v-on:auxclick="guideClicked"
    > ההנחיות</a></b>.
     </h5> 
     (מומלץ להשאיר את עמוד ההנחיות פתוח בחלון או בטאב נפרד בעת ביצוע המשימה.)
@@ -39,7 +39,7 @@
     <br>
      שאלות ותשובות שאינן עומדות בקריטריונים בסיסיים הן פסולות.
     <br>
-  עבור כל פסקה הקדישו כ-9-10 דקות לנסח כ-7 שאלות (סה״כ: כ-42 שאלות לאורך המשימה).
+  עבור כל פסקה הקדישו כ-9-10 דקות לנסח כ-7 שאלות (סה״כ: כ-21 שאלות לאורך המשימה).
       <!-- <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer> -->
       <!-- <br>
       <div class="uploadBar" align = "left">
