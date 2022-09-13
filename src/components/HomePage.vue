@@ -197,10 +197,16 @@ export default {
     "631096f0809cdfcb60c79b40": "G4",
     "631096f97f7afe83dcb78a66": "G5",
     "631097142398c57cedb78a86": "G6",
-    "6310971bf9b69e50f2c6cd64": "EG7",
-    "63109721e6f098924388fe13": "EG8",
-    "6310972a059789928aff82f8": "EG9",
-    "63109736ef5c383cb10f2036": "EG10"
+    "6310971bf9b69e50f2c6cd64": "G7",
+    "63109721e6f098924388fe13": "G8",
+    "6310972a059789928aff82f8": "G9",
+    "63109736ef5c383cb10f2036": "G10",
+    "631f4bbdc9acf70fb8d1decf": "G11",
+    "631f4bc8abeb413e1598268f": "G12",
+    "63203f3c57a6b89c9ca6d7a6": "G13",
+    "63203f48d9c50feb2ff664d5": "G14",
+    "63203f552acacedeebf7674b": "G15",
+    "63203f5e786124017af76736": "G16"
 };
     const study = (this.studyID in studies)? studies[this.studyID] : "f";
     const studyDef = require(`../studies/${study}.json`);
