@@ -206,7 +206,14 @@ export default {
     "63203f3c57a6b89c9ca6d7a6": "G13",
     "63203f48d9c50feb2ff664d5": "G14",
     "63203f552acacedeebf7674b": "G15",
-    "63203f5e786124017af76736": "G16"
+    "63203f5e786124017af76736": "G16",
+    "6321ba8988ed623f0eba65b0": "G17",
+    "6321d76d7ede85a148647a57": "G18",
+    "6321d78246f5bc5d4429a555": "G19",
+    "6321d7ab87d04c2bbc647a1e": "G20",
+    "6321d7bfd5a44c84923f4d2b": "G21",
+    "6321d7f89f502bc8692d906f": "G22",
+    "6321d8030ee3720a1246befd": "G23"
 };
     const study = (this.studyID in studies)? studies[this.studyID] : "f";
     const studyDef = require(`../studies/${study}.json`);
